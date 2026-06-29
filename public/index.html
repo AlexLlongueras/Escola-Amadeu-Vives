@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escola Amadeu Vives — Gestió d'Horaris</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       PANTALLA LOGIN
+  ═════════════════════════════════════════════════ -->
+  <div id="pantalla-login">
+    <div class="login-card">
+      <div class="escola-logo">
+        <h1>Escola<br><span style="color:var(--blau-mig)">Amadeu Vives</span></h1>
+        <p>Gestió d'Horaris i Activitats Escolars</p>
+      </div>
+      <label for="input-email">Correu electrònic</label>
+      <input type="email" id="input-email"
+             placeholder="usuari@escolaamadeu.cat" autocomplete="email">
+      <label for="input-password">Contrasenya</label>
+      <input type="password" id="input-password"
+             placeholder="••••••••" autocomplete="current-password">
+      <button class="btn-login" id="btn-login">Iniciar sessió</button>
+      <p id="login-error"></p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       PANTALLA DASHBOARD
+  ═════════════════════════════════════════════════ -->
+  <div id="pantalla-dashboard" style="display:none">
+
+    <!-- Navbar -->
+    <nav class="navbar-escola">
+      <div class="marca">Escola <span>Amadeu Vives</span></div>
+      <div class="navbar-info">
+        <span class="nom-usuari" id="nav-nom"></span>
+        <span class="badge-rol"  id="nav-rol"></span>
+        <!-- Selector de curs escolar — poblat i mostrat per main.js després del login -->
+        <select id="selector-any-escolar"
+                class="selector-any-escolar"
+                title="Selecciona el curs escolar"
+                aria-label="Curs escolar"
+                style="display:none">
+        </select>
+        <!-- Botons d'accés ràpid al panell admin (visibles només per a rol=admin) -->
+        <div id="link-admin" class="admin-links-grup" style="display:none">
+          <a href="admin.html#horaris"       class="btn-logout" title="Gestionar franges horàries">📅 Horaris</a>
+          <a href="admin.html#extraescolars" class="btn-logout" title="Gestionar activitats extraescolars">⚽ Extraescolars</a>
+          <a href="admin.html#dies-especials" class="btn-logout" title="Gestionar festius, excursions i colònies">📆 Dies Especials</a>
+        </div>
+        <button class="btn-logout" id="btn-logout">Sortir</button>
+      </div>
+    </nav>
+
+    <main class="main-content">
+
+      <!-- Estadístiques -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icona blau">📚</div>
+          <div>
+            <div class="xifra" id="stat-classes">—</div>
+            <div class="etiqueta">Classes setmanals</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icona groc">🏫</div>
+          <div>
+            <div class="xifra" id="stat-aules">—</div>
+            <div class="etiqueta">Aules en ús</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icona verd">✅</div>
+          <div>
+            <div class="xifra" id="stat-assignatures">—</div>
+            <div class="etiqueta">Assignatures</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PESTANYES BOOTSTRAP
+      ═══════════════════════════════════════════ -->
+      <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="horari-tab"
+                  data-bs-toggle="tab" data-bs-target="#horari"
+                  type="button" role="tab">
+            📅 El meu Horari
+          </button>
+        </li>
+        <li class="nav-item" role="presentation" id="li-tab-activitats"
+            style="display:none">
+          <button class="nav-link" id="activitats-tab"
+                  data-bs-toggle="tab" data-bs-target="#activitats"
+                  type="button" role="tab">
+            ⚽ Activitats Extraescolars
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="myTabContent">
+
+        <!-- ── PANELL HORARI ──────────────────────── -->
+        <div class="tab-pane fade show active"
+             id="horari" role="tabpanel">
+
+          <!-- Controls del calendari -->
+          <div class="calendari-controls">
+            <h2 id="titol-calendari">El meu Horari</h2>
+
+            <!-- Selector de grup (admin) — poblat dinàmicament per main.js -->
+            <select class="selector-grup" id="selector-grup"
+                    style="display:none">
+              <option value="">— Selecciona un grup —</option>
+            </select>
+
+            <!-- Selector vista professor (personal/tutoria) -->
+            <select class="selector-grup" id="selector-profesor"
+                    style="display:none">
+              <option value="personal">La meva feina</option>
+            </select>
+
+            <!-- Selector fill (família >1 fill) -->
+            <select class="selector-grup" id="selector-fill"
+                    style="display:none">
+            </select>
+
+            <!-- Navegació setmanes -->
+            <div class="nav-setmana">
+              <button class="btn-setmana" id="btn-anterior">← Anterior</button>
+              <span   class="label-setmana" id="label-setmana"></span>
+              <button class="btn-setmana" id="btn-seguent">Següent →</button>
+            </div>
+          </div>
+
+          <!-- Calendari -->
+          <div class="calendari-wrapper">
+            <div class="calendari-grid" id="calendari-grid"></div>
+          </div>
+
+        </div>
+
+        <!-- ── PANELL ACTIVITATS ──────────────────── -->
+        <div class="tab-pane fade"
+             id="activitats" role="tabpanel">
+
+          <div class="calendari-controls" style="margin-top:1rem">
+            <h2>Activitats Extraescolars</h2>
+          </div>
+          <div class="activitats-grid" id="activitats-grid">
+            <p style="color:var(--text-clar);font-size:.9rem">
+              Carregant activitats...
+            </p>
+          </div>
+
+        </div>
+
+      </div><!-- /tab-content -->
+
+    </main>
+  </div>
+
+  <!-- Scripts — ordre important -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

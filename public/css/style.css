@@ -1,0 +1,828 @@
+/* ============================================================
+   ESCOLA AMADEU VIVES — Dashboard Principal
+   Disseny: institucional net amb identitat pròpia
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Fraunces:wght@700&display=swap');
+
+/* ── Variables globals ──────────────────────────────────── */
+:root {
+  --blau-fosc:    #1a2e4a;
+  --blau-mig:     #2563a8;
+  --blau-clar:    #e8f0fb;
+  --accent:       #f59e0b;
+  --verd-ok:      #10b981;
+  --vermell-err:  #ef4444;
+  --gris-fons:    #f4f6f9;
+  --gris-vora:    #dde3ec;
+  --blanc:        #ffffff;
+  --text-fosc:    #1a2e4a;
+  --text-mig:     #4a5f7a;
+  --text-clar:    #8fa3be;
+  --radi:         10px;
+  --ombra:        0 2px 12px rgba(26,46,74,0.08);
+  --ombra-forta:  0 4px 24px rgba(26,46,74,0.15);
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-cos:     'DM Sans', system-ui, sans-serif;
+  --transicio:    0.2s ease;
+}
+
+/* ── Reset i base ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-cos);
+  background:  var(--gris-fons);
+  color:       var(--text-fosc);
+  min-height:  100vh;
+}
+
+/* ── Pantalla de Login ──────────────────────────────────── */
+#pantalla-login {
+  min-height: 100vh;
+  display:    flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--blau-fosc) 0%, var(--blau-mig) 100%);
+  padding:    1rem;
+}
+
+.login-card {
+  background:    var(--blanc);
+  border-radius: 16px;
+  padding:       2.5rem 2rem;
+  width:         100%;
+  max-width:     420px;
+  box-shadow:    var(--ombra-forta);
+  animation:     pujarCard 0.4s ease;
+}
+
+@keyframes pujarCard {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.login-card .escola-logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-card .escola-logo h1 {
+  font-family: var(--font-display);
+  font-size:   1.6rem;
+  color:       var(--blau-fosc);
+  line-height: 1.2;
+}
+
+.login-card .escola-logo p {
+  font-size: 0.85rem;
+  color:     var(--text-mig);
+  margin-top: 0.25rem;
+}
+
+.login-card label {
+  font-size:   0.8rem;
+  font-weight: 600;
+  color:       var(--text-mig);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.login-card input {
+  width:         100%;
+  padding:       0.7rem 1rem;
+  border:        1.5px solid var(--gris-vora);
+  border-radius: var(--radi);
+  font-family:   var(--font-cos);
+  font-size:     0.95rem;
+  color:         var(--text-fosc);
+  transition:    border-color var(--transicio);
+  margin-bottom: 1rem;
+}
+
+.login-card input:focus {
+  outline:      none;
+  border-color: var(--blau-mig);
+  box-shadow:   0 0 0 3px rgba(37,99,168,0.12);
+}
+
+.btn-login {
+  width:         100%;
+  padding:       0.8rem;
+  background:    var(--blau-mig);
+  color:         var(--blanc);
+  border:        none;
+  border-radius: var(--radi);
+  font-family:   var(--font-cos);
+  font-size:     0.95rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    background var(--transicio), transform var(--transicio);
+}
+
+.btn-login:hover  { background: var(--blau-fosc); transform: translateY(-1px); }
+.btn-login:active { transform: translateY(0); }
+
+#login-error {
+  font-size:  0.85rem;
+  color:      var(--vermell-err);
+  text-align: center;
+  margin-top: 0.75rem;
+  min-height: 1.2em;
+}
+
+/* ── Navbar ─────────────────────────────────────────────── */
+#pantalla-dashboard { display: none; }
+
+.navbar-escola {
+  background:  var(--blau-fosc);
+  padding:     0.75rem 1.5rem;
+  display:     flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow:  0 2px 8px rgba(0,0,0,0.15);
+  position:    sticky;
+  top:         0;
+  z-index:     100;
+}
+
+.navbar-escola .marca {
+  font-family: var(--font-display);
+  font-size:   1.2rem;
+  color:       var(--blanc);
+  letter-spacing: 0.01em;
+}
+
+.navbar-escola .marca span {
+  color: var(--accent);
+}
+
+.navbar-info {
+  display:     flex;
+  align-items: center;
+  gap:         1rem;
+}
+
+.badge-rol {
+  background:    rgba(255,255,255,0.12);
+  color:         var(--blanc);
+  padding:       0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size:     0.78rem;
+  font-weight:   500;
+  text-transform: capitalize;
+  border:        1px solid rgba(255,255,255,0.2);
+}
+
+.navbar-escola .nom-usuari {
+  color:     rgba(255,255,255,0.85);
+  font-size: 0.88rem;
+}
+
+.btn-logout {
+  background:    transparent;
+  border:        1.5px solid rgba(255,255,255,0.3);
+  color:         var(--blanc);
+  padding:       0.3rem 0.85rem;
+  border-radius: 6px;
+  font-size:     0.82rem;
+  cursor:        pointer;
+  transition:    all var(--transicio);
+}
+
+.btn-logout:hover { background: rgba(255,255,255,0.1); border-color: var(--blanc); }
+
+/* ── Contingut principal ────────────────────────────────── */
+.main-content {
+  max-width: 1400px;
+  margin:    0 auto;
+  padding:   1.5rem;
+}
+
+/* ── Controls del calendari ─────────────────────────────── */
+.calendari-controls {
+  display:       flex;
+  align-items:   center;
+  gap:           1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap:     wrap;
+}
+
+.calendari-controls h2 {
+  font-family: var(--font-display);
+  font-size:   1.4rem;
+  color:       var(--blau-fosc);
+  flex:        1;
+}
+
+.selector-grup {
+  padding:       0.55rem 1rem;
+  border:        1.5px solid var(--gris-vora);
+  border-radius: var(--radi);
+  font-family:   var(--font-cos);
+  font-size:     0.9rem;
+  color:         var(--text-fosc);
+  background:    var(--blanc);
+  cursor:        pointer;
+  transition:    border-color var(--transicio);
+}
+
+.selector-grup:focus {
+  outline:      none;
+  border-color: var(--blau-mig);
+}
+
+.btn-carregar {
+  padding:       0.55rem 1.25rem;
+  background:    var(--blau-mig);
+  color:         var(--blanc);
+  border:        none;
+  border-radius: var(--radi);
+  font-family:   var(--font-cos);
+  font-size:     0.88rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    background var(--transicio);
+}
+
+.btn-carregar:hover { background: var(--blau-fosc); }
+
+/* ── Graella del calendari ──────────────────────────────── */
+.calendari-wrapper {
+  background:    var(--blanc);
+  border-radius: 14px;
+  box-shadow:    var(--ombra);
+  overflow:      hidden;
+  border:        1px solid var(--gris-vora);
+}
+
+.calendari-grid {
+  display: grid;
+  /* Columna d'hores + 5 dies */
+  grid-template-columns: 64px repeat(5, 1fr);
+  min-width: 700px;
+}
+
+/* Capçaleres dels dies */
+.cap-dia {
+  background:  var(--blau-fosc);
+  color:       var(--blanc);
+  text-align:  center;
+  padding:     0.75rem 0.5rem;
+  font-size:   0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+.cap-dia:first-child { background: var(--blau-fosc); } /* cel·la d'hores */
+
+/* Files d'hores */
+.fila-hora {
+  display: contents; /* cada fila és un grup de 6 cel·les dins el grid */
+}
+
+.etiqueta-hora {
+  background:  var(--gris-fons);
+  border-top:  1px solid var(--gris-vora);
+  border-right: 1px solid var(--gris-vora);
+  padding:     0.5rem 0.25rem;
+  text-align:  center;
+  font-size:   0.72rem;
+  font-weight: 500;
+  color:       var(--text-clar);
+  display:     flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 0.4rem;
+}
+
+.cel-dia {
+  border-top:   1px solid var(--gris-vora);
+  border-right: 1px solid var(--gris-vora);
+  min-height:   56px;
+  padding:      3px;
+  position:     relative;
+}
+
+.cel-dia:last-child { border-right: none; }
+
+/* ── Blocs d'assignatura ────────────────────────────────── */
+.bloc-assignatura {
+  border-radius: 7px;
+  padding:       0.4rem 0.6rem;
+  height:        100%;
+  min-height:    50px;
+  display:       flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor:        default;
+  transition:    transform var(--transicio), box-shadow var(--transicio);
+  animation:     apareixerBloc 0.3s ease;
+  position:      relative;
+  overflow:      hidden;
+}
+
+@keyframes apareixerBloc {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.bloc-assignatura::before {
+  content:  '';
+  position: absolute;
+  left:     0; top: 0; bottom: 0;
+  width:    3px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 7px 0 0 7px;
+}
+
+.bloc-assignatura:hover {
+  transform:  translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.bloc-assignatura .nom-asig {
+  font-size:   0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color:       var(--blanc);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.bloc-assignatura .professor {
+  font-size:  0.68rem;
+  color:      rgba(255,255,255,0.85);
+  margin-top: 2px;
+}
+
+.bloc-assignatura .hores {
+  font-size:  0.65rem;
+  color:      rgba(255,255,255,0.7);
+  margin-top: 1px;
+}
+
+/* ── Missatges d'estat ──────────────────────────────────── */
+.missatge-buit {
+  text-align:  center;
+  padding:     3rem 1rem;
+  color:       var(--text-clar);
+  font-size:   0.9rem;
+  grid-column: 1 / -1;
+}
+
+.missatge-carregant {
+  text-align: center;
+  padding:    1rem;
+  color:      var(--text-mig);
+  font-size:  0.88rem;
+}
+
+/* ── Targetes d'estadística ─────────────────────────────── */
+.stats-row {
+  display:               grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap:                   1rem;
+  margin-bottom:         1.5rem;
+}
+
+.stat-card {
+  background:    var(--blanc);
+  border-radius: var(--radi);
+  padding:       1.1rem 1.25rem;
+  box-shadow:    var(--ombra);
+  border:        1px solid var(--gris-vora);
+  display:       flex;
+  align-items:   center;
+  gap:           1rem;
+  animation:     pujarCard 0.3s ease both;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.10s; }
+.stat-card:nth-child(3) { animation-delay: 0.15s; }
+
+.stat-icona {
+  font-size:     1.6rem;
+  width:         44px;
+  height:        44px;
+  border-radius: 10px;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  flex-shrink:   0;
+}
+
+.stat-icona.blau  { background: var(--blau-clar); }
+.stat-icona.groc  { background: #fef3c7; }
+.stat-icona.verd  { background: #d1fae5; }
+
+.stat-card .xifra {
+  font-family: var(--font-display);
+  font-size:   1.6rem;
+  color:       var(--blau-fosc);
+  line-height: 1;
+}
+
+.stat-card .etiqueta {
+  font-size: 0.78rem;
+  color:     var(--text-mig);
+  margin-top: 2px;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .main-content { padding: 1rem 0.75rem; }
+  .calendari-wrapper { overflow-x: auto; }
+  .calendari-controls { gap: 0.75rem; }
+  .calendari-controls h2 { font-size: 1.1rem; }
+}
+
+/* ── Navegació per setmanes ─────────────────────────────── */
+.nav-setmana {
+  display:     flex;
+  align-items: center;
+  gap:         0.75rem;
+}
+
+.btn-setmana {
+  background:    var(--blanc);
+  border:        1.5px solid var(--gris-vora);
+  border-radius: var(--radi);
+  padding:       0.45rem 0.9rem;
+  font-family:   var(--font-cos);
+  font-size:     0.82rem;
+  font-weight:   600;
+  color:         var(--blau-mig);
+  cursor:        pointer;
+  transition:    all var(--transicio);
+}
+
+.btn-setmana:hover {
+  background:    var(--blau-clar);
+  border-color:  var(--blau-mig);
+}
+
+.label-setmana {
+  font-size:   0.85rem;
+  font-weight: 600;
+  color:       var(--text-fosc);
+  min-width:   160px;
+  text-align:  center;
+}
+
+/* ══════════════════════════════════════════════════════
+   ACTIVITATS EXTRAESCOLARS — Cards redissenyades
+   ══════════════════════════════════════════════════════ */
+
+/* Grid contenidor */
+#activitats-grid {
+  padding: 0.5rem 0 1.5rem;
+}
+
+#activitats-grid .row > div {
+  animation: pujarCard 0.35s ease both;
+}
+
+/* ── Card base ───────────────────────────────────────── */
+.act-card {
+  background:    var(--blanc);
+  border-radius: 14px;
+  border:        1px solid var(--gris-vora);
+  box-shadow:    0 2px 16px rgba(26,46,74,0.08);
+  overflow:      hidden;
+  display:       flex;
+  flex-direction: column;
+  height:        100%;
+  transition:    transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.act-card:hover {
+  transform:  translateY(-4px);
+  box-shadow: 0 8px 28px rgba(26,46,74,0.14);
+}
+
+/* ── Capçalera ───────────────────────────────────────── */
+.act-card-cap {
+  background: linear-gradient(
+    135deg,
+    var(--blau-fosc) 0%,
+    var(--blau-mig)  100%
+  );
+  padding:     1rem 1.1rem;
+  display:     flex;
+  align-items: center;
+  gap:         0.85rem;
+}
+
+.act-emoji {
+  font-size:      2rem;
+  line-height:    1;
+  flex-shrink:    0;
+  filter:         drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.act-cap-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.act-titol {
+  font-family:   var(--font-display);
+  font-size:     1rem;
+  color:         var(--blanc);
+  margin:        0 0 0.2rem;
+  line-height:   1.25;
+  /* Truncar si és molt llarg */
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+.act-responsable {
+  font-size: 0.75rem;
+  color:     rgba(255,255,255,0.78);
+}
+
+/* ── Cos ─────────────────────────────────────────────── */
+.act-card-cos {
+  padding: 1rem 1.1rem;
+  flex:    1;
+  display: flex;
+  flex-direction: column;
+  gap:     0.5rem;
+}
+
+.act-detall {
+  display:     flex;
+  align-items: center;
+  gap:         0.5rem;
+  font-size:   0.82rem;
+  color:       var(--text-mig);
+}
+
+.act-icona-detall { font-size: 1rem; flex-shrink: 0; }
+
+/* ── Barra de progrés ────────────────────────────────── */
+.act-progress-wrap {
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+.act-progress-label {
+  display:         flex;
+  justify-content: space-between;
+  font-size:       0.75rem;
+  color:           var(--text-mig);
+  margin-bottom:   0.35rem;
+}
+
+.act-places-text strong { color: var(--blau-fosc); }
+
+.act-progress-bar {
+  height:        8px !important;
+  border-radius: 99px !important;
+  background:    var(--gris-vora) !important;
+  overflow:      hidden;
+}
+
+.act-progress-bar .progress-bar {
+  border-radius: 99px !important;
+}
+
+/* Eliminem les ratlles animades en producció (opcional) */
+.progress-bar-striped {
+  background-size: 1rem 1rem;
+}
+
+.act-places-lliures {
+  margin-top: 0.4rem;
+  font-size:  0.75rem;
+  color:      var(--verd-ok);
+  font-weight: 500;
+}
+
+.act-places-lliures.poques   { color: var(--accent); }
+.act-places-lliures.esgotades { color: var(--vermell-err); }
+
+/* ── Peu (botó d'inscripció) ─────────────────────────── */
+.act-card-peu {
+  padding:    0.85rem 1.1rem;
+  border-top: 1px solid var(--gris-vora);
+  background: var(--gris-fons);
+}
+
+/* Botó disponible */
+.btn-inscriure-act {
+  background:    var(--blau-mig);
+  color:         var(--blanc);
+  border:        none;
+  border-radius: 8px;
+  padding:       0.6rem 1rem;
+  font-family:   var(--font-cos);
+  font-size:     0.85rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    all 0.2s ease;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  gap:           0.5rem;
+}
+
+.btn-inscriure-act:hover {
+  background:  var(--blau-fosc);
+  transform:   translateY(-1px);
+  box-shadow:  0 4px 12px rgba(37,99,168,0.3);
+}
+
+.btn-inscriure-act:active { transform: translateY(0); }
+
+/* Badge de places dins el botó */
+.badge-places {
+  background:    rgba(255,255,255,0.25);
+  border-radius: 99px;
+  padding:       0.1rem 0.55rem;
+  font-size:     0.75rem;
+  font-weight:   600;
+}
+
+/* Botó ja inscrit */
+.btn-inscrit {
+  background:    var(--blau-clar);
+  color:         var(--blau-mig);
+  border:        1.5px solid var(--blau-mig);
+  border-radius: 8px;
+  padding:       0.6rem 1rem;
+  font-family:   var(--font-cos);
+  font-size:     0.85rem;
+  font-weight:   600;
+  cursor:        default;
+}
+
+/* Botó donar-se de baixa (sobre fons d'inscrit, però operatiu) */
+.btn-baixa-act {
+  background:    var(--blanc);
+  color:         var(--vermell-err);
+  border:        1.5px solid #fca5a5;
+  border-radius: 8px;
+  padding:       0.6rem 1rem;
+  font-family:   var(--font-cos);
+  font-size:     0.85rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    all 0.2s ease;
+}
+
+.btn-baixa-act:hover {
+  background:  #fee2e2;
+  border-color: var(--vermell-err);
+}
+
+/* Botó complet */
+.btn-complet {
+  background:    #fee2e2;
+  color:         var(--vermell-err);
+  border:        1.5px solid #fca5a5;
+  border-radius: 8px;
+  padding:       0.6rem 1rem;
+  font-family:   var(--font-cos);
+  font-size:     0.85rem;
+  font-weight:   600;
+  cursor:        not-allowed;
+}
+
+/* Botó curs passat — inscripcions tancades */
+.btn-tancat {
+  background:    #f3f4f6;
+  color:         #6b7280;
+  border:        1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding:       0.55rem 1rem;
+  font-family:   var(--font-cos);
+  font-size:     0.88rem;
+  font-weight:   500;
+  width:         100%;
+  cursor:        default;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 576px) {
+  .act-card-cap { padding: 0.85rem; }
+  .act-titol    { font-size: 0.95rem; white-space: normal; }
+  .act-emoji    { font-size: 1.6rem; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SELECTOR DE CURS ESCOLAR (navbar)
+   Apareix a la navbar per filtrar horaris i activitats per any.
+   Integrat en el tema fosc de la navbar mantenint coherència visual.
+   ══════════════════════════════════════════════════════════ */
+
+.selector-any-escolar {
+  background:     rgba(255,255,255,0.10);
+  color:          var(--blanc);
+  border:         1px solid rgba(255,255,255,0.22);
+  border-radius:  6px;
+  padding:        0.3rem 0.8rem;
+  font-family:    var(--font-cos);
+  font-size:      0.78rem;
+  font-weight:    500;
+  cursor:         pointer;
+  transition:     background var(--transicio), border-color var(--transicio);
+  max-width:      170px;
+  animation:      pujarCard 0.3s ease;
+}
+
+.selector-any-escolar:hover {
+  background:     rgba(255,255,255,0.18);
+  border-color:   rgba(255,255,255,0.45);
+}
+
+.selector-any-escolar:focus {
+  outline:        none;
+  border-color:   var(--accent);
+  box-shadow:     0 0 0 2px rgba(245,158,11,0.25);
+}
+
+.selector-any-escolar option {
+  background:  #1a2e4a;
+  color:       #ffffff;
+  font-size:   0.85rem;
+}
+
+@media (max-width: 600px) {
+  .selector-any-escolar {
+    font-size: 0.72rem;
+    max-width: 130px;
+    padding:   0.25rem 0.5rem;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   DIES ESPECIALS — colors per tipus al calendari setmanal
+   S'apliquen a la capçalera (cap-dia) i a les cel·les (cel-dia)
+   de la columna del dia afectat.
+   ══════════════════════════════════════════════════════════ */
+
+/* Festiu → vermell suau */
+.cap-dia.dia-festiu {
+  background:  #fca5a5 !important;
+  color:       #7f1d1d;
+}
+.cel-dia.dia-festiu {
+  background:  #fee2e2;
+}
+
+/* Excursió → verd suau */
+.cap-dia.dia-excursio {
+  background:  #6ee7b7 !important;
+  color:       #064e3b;
+}
+.cel-dia.dia-excursio {
+  background:  #d1fae5;
+}
+
+/* Colònies → violeta suau */
+.cap-dia.dia-colonies {
+  background:  #c4b5fd !important;
+  color:       #3b0764;
+}
+.cel-dia.dia-colonies {
+  background:  #ede9fe;
+}
+
+/* ── Grup de links d'administrador a la navbar (index.html) ─
+   Tres botons (Horaris / Extraescolars / Dies Especials) que
+   apareixen únicament quan el rol loguejat és 'admin'.        */
+.admin-links-grup {
+  display:     flex;
+  gap:         0.35rem;
+  align-items: center;
+  flex-wrap:   wrap;
+}
+
+.admin-links-grup .btn-logout {
+  font-size:  0.74rem;
+  padding:    0.28rem 0.65rem;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* Nom de l'esdeveniment dins la capçalera del dia */
+.banner-especial {
+  display:        block;
+  font-size:      0.6rem;
+  font-weight:    700;
+  letter-spacing: 0.03em;
+  margin-top:     3px;
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+  max-width:      100%;
+  opacity:        0.9;
+  text-transform: none;
+}

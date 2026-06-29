@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin — Escola Amadeu Vives</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar-escola">
+    <div class="marca">Escola <span>Amadeu Vives</span>
+      <span class="badge-admin">Admin</span>
+    </div>
+    <div class="navbar-info">
+      <span class="nom-usuari" id="nav-nom"></span>
+      <select id="admin-selector-any" class="selector-any-escolar"
+              title="Selecciona el curs escolar" aria-label="Curs escolar"
+              style="display:none">
+      </select>
+      <a href="index.html" class="btn-logout">← Dashboard</a>
+      <button class="btn-logout" id="btn-logout">Sortir</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+
+    <div class="admin-header">
+      <h1>Panel d'Administració</h1>
+      <p>Gestiona els horaris i les activitats del centre.</p>
+    </div>
+
+    <!-- Pestanyes -->
+    <div class="nav-tabs-custom">
+      <button class="nav-tab activa" data-tab="horaris">📅 Gestionar Horaris</button>
+      <button class="nav-tab"        data-tab="extraescolars">⚽ Gestionar Extraescolars</button>
+      <button class="nav-tab"        data-tab="dies-especials">📆 Dies Especials</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         TAB 1: HORARIS
+    ══════════════════════════════════════════════ -->
+    <section class="seccio visible" id="seccio-horaris">
+      <div class="admin-layout">
+
+        <!-- Formulari de creació -->
+        <div class="form-card">
+          <h2 class="form-titol">➕ Nova Franja Horària</h2>
+
+          <div class="form-grup">
+            <label for="h-dia">Dia de la setmana</label>
+            <select id="h-dia">
+              <option value="">— Selecciona —</option>
+              <option>Dilluns</option>
+              <option>Dimarts</option>
+              <option>Dimecres</option>
+              <option>Dijous</option>
+              <option>Divendres</option>
+            </select>
+          </div>
+
+          <div class="form-fila">
+            <div class="form-grup">
+              <label for="h-inici">Hora inici</label>
+              <input type="time" id="h-inici" step="1800">
+            </div>
+            <div class="form-grup">
+              <label for="h-fi">Hora fi</label>
+              <input type="time" id="h-fi" step="1800">
+            </div>
+          </div>
+
+          <div class="form-grup">
+            <label for="h-asignatura">ID Assignatura</label>
+            <select id="h-asignatura">
+              <option value="">— Carregant... —</option>
+            </select>
+          </div>
+
+          <div class="form-grup">
+            <label for="h-profesor">ID Professor</label>
+            <select id="h-profesor">
+              <option value="">— Carregant... —</option>
+            </select>
+          </div>
+
+          <div class="form-grup">
+            <label for="h-aula">ID Aula</label>
+            <select id="h-aula">
+              <option value="">— Carregant... —</option>
+            </select>
+          </div>
+
+          <div class="form-grup">
+            <label for="h-grup">Grup</label>
+            <select id="h-grup">
+              <option value="">— Carregant grups... —</option>
+            </select>
+          </div>
+
+          <div id="horari-error" class="error-box" style="display:none"></div>
+          <div id="horari-ok"    class="ok-box"    style="display:none"></div>
+
+          <button class="btn-submit" id="btn-crear-horari">
+            Crear Franja Horària
+          </button>
+        </div>
+
+        <!-- Taula de franges existents -->
+        <div class="taula-card">
+          <div class="taula-cap">
+            <h2 class="form-titol" style="margin:0">📋 Franges Existents</h2>
+            <select class="selector-grup" id="filtre-grup" style="font-size:0.85rem">
+              <option value="">Tots els grups</option>
+            </select>
+            <button class="btn-carregar" id="btn-filtrar"
+                    style="font-size:0.82rem;padding:0.45rem 0.9rem">
+              Filtrar
+            </button>
+          </div>
+          <div class="taula-wrapper">
+            <table class="taula-admin" id="taula-horaris">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Dia</th><th>Inici</th>
+                  <th>Fi</th><th>Assignatura</th>
+                  <th>Professor</th><th>Aula</th><th>Grup</th>
+                  <th>Acció</th>
+                </tr>
+              </thead>
+              <tbody id="horaris-tbody">
+                <tr><td colspan="9" class="taula-buit">
+                  Selecciona un grup i prem Filtrar.
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         TAB 2: EXTRAESCOLARS
+    ══════════════════════════════════════════════ -->
+    <section class="seccio" id="seccio-extraescolars">
+      <div class="admin-layout">
+
+        <!-- Formulari de creació -->
+        <div class="form-card">
+          <h2 class="form-titol">➕ Nova Activitat</h2>
+
+          <div class="form-grup">
+            <label for="a-nom">Nom de l'activitat</label>
+            <input type="text" id="a-nom" placeholder="Ex: Taller de Robòtica">
+          </div>
+
+          <div class="form-grup">
+            <label for="a-dia">Dia de la setmana</label>
+            <select id="a-dia">
+              <option value="">— Selecciona (opcional) —</option>
+              <option>Dilluns</option>
+              <option>Dimarts</option>
+              <option>Dimecres</option>
+              <option>Dijous</option>
+              <option>Divendres</option>
+            </select>
+          </div>
+
+          <div class="form-fila">
+            <div class="form-grup">
+              <label for="a-inici">Hora inici</label>
+              <input type="time" id="a-inici" step="1800">
+            </div>
+            <div class="form-grup">
+              <label for="a-fi">Hora fi</label>
+              <input type="time" id="a-fi" step="1800">
+            </div>
+          </div>
+
+          <div class="form-grup">
+            <label for="a-aula">Aula</label>
+            <select id="a-aula">
+              <option value="">— Sense aula assignada —</option>
+            </select>
+          </div>
+
+          <div class="form-grup">
+            <label for="a-responsable">Responsable</label>
+            <input type="text" id="a-responsable" placeholder="Nom del responsable">
+          </div>
+
+          <div class="form-grup">
+            <label for="a-places">Places màximes</label>
+            <input type="number" id="a-places" min="1" max="100" placeholder="Ex: 20">
+          </div>
+
+          <div id="activitat-error" class="error-box" style="display:none"></div>
+          <div id="activitat-ok"    class="ok-box"    style="display:none"></div>
+
+          <button class="btn-submit" id="btn-crear-activitat">
+            Crear Activitat
+          </button>
+        </div>
+
+        <!-- Taula d'activitats existents -->
+        <div class="taula-card">
+          <div class="taula-cap">
+            <h2 class="form-titol" style="margin:0">📋 Activitats Existents</h2>
+            <button class="btn-carregar" id="btn-carregar-activitats"
+                    style="font-size:0.82rem;padding:0.45rem 0.9rem">
+              Actualitzar
+            </button>
+          </div>
+          <div class="taula-wrapper">
+            <table class="taula-admin" id="taula-activitats">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Nom</th><th>Dia</th>
+                  <th>Horari</th><th>Responsable</th>
+                  <th>Places</th><th>Acció</th>
+                </tr>
+              </thead>
+              <tbody id="activitats-tbody">
+                <tr><td colspan="7" class="taula-buit">
+                  Prem "Actualitzar" per veure les activitats.
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         TAB 3: DIES ESPECIALS
+    ══════════════════════════════════════════════ -->
+    <section class="seccio" id="seccio-dies-especials">
+      <div class="admin-layout">
+
+        <!-- Formulari de creació -->
+        <div class="form-card">
+          <h2 class="form-titol">➕ Nou Dia Especial</h2>
+
+          <div class="form-grup">
+            <label for="de-nom">Nom de l'esdeveniment</label>
+            <input type="text" id="de-nom" placeholder="Ex: Dia de la Pau">
+          </div>
+
+          <div class="form-grup">
+            <label for="de-tipus">Tipus</label>
+            <select id="de-tipus">
+              <option value="">— Selecciona —</option>
+              <option value="festiu">🔴 Festiu</option>
+              <option value="excursio">🟢 Excursió</option>
+              <option value="colonies">🟣 Colònies</option>
+            </select>
+          </div>
+
+          <div class="form-fila">
+            <div class="form-grup">
+              <label for="de-inici">Data inici</label>
+              <input type="date" id="de-inici">
+            </div>
+            <div class="form-grup">
+              <label for="de-fi">Data fi</label>
+              <input type="date" id="de-fi">
+            </div>
+          </div>
+
+          <div class="form-grup">
+            <label for="de-grup">Grup (opcional)</label>
+            <input type="text" id="de-grup"
+                   placeholder="Ex: 1r A — buit = tot el centre">
+          </div>
+
+          <div id="dies-error" class="error-box" style="display:none"></div>
+          <div id="dies-ok"    class="ok-box"    style="display:none"></div>
+
+          <button class="btn-submit" id="btn-crear-dia">
+            Registrar Dia Especial
+          </button>
+        </div>
+
+        <!-- Taula de dies existents -->
+        <div class="taula-card">
+          <div class="taula-cap">
+            <h2 class="form-titol" style="margin:0">📋 Dies Registrats</h2>
+            <button class="btn-carregar" id="btn-carregar-dies"
+                    style="font-size:0.82rem;padding:0.45rem 0.9rem">
+              Actualitzar
+            </button>
+          </div>
+          <div class="taula-wrapper">
+            <table class="taula-admin" id="taula-dies">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Nom</th><th>Tipus</th>
+                  <th>Inici</th><th>Fi</th><th>Grup</th><th>Acció</th>
+                </tr>
+              </thead>
+              <tbody id="dies-tbody">
+                <tr><td colspan="7" class="taula-buit">
+                  Prem "Actualitzar" per veure els dies especials.
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal de confirmació d'eliminació -->
+  <div class="modal-overlay" id="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <h3 id="modal-titol">Confirmar eliminació</h3>
+      <p  id="modal-missatge"></p>
+      <div class="modal-botons">
+        <button class="btn-cancel" id="modal-cancel">Cancel·lar</button>
+        <button class="btn-delete" id="modal-confirmar">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
