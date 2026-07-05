@@ -4,175 +4,445 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escola Amadeu Vives — Gestió d'Horaris</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js" defer></script>
 </head>
 <body>
 
-  <!-- ══════════════════════════════════════════════
-       PANTALLA LOGIN
-  ═════════════════════════════════════════════════ -->
-  <div id="pantalla-login">
-    <div class="login-card">
-      <div class="escola-logo">
-        <h1>Escola<br><span style="color:var(--blau-mig)">Amadeu Vives</span></h1>
-        <p>Gestió d'Horaris i Activitats Escolars</p>
-      </div>
-      <label for="input-email">Correu electrònic</label>
-      <input type="email" id="input-email"
-             placeholder="usuari@escolaamadeu.cat" autocomplete="email">
-      <label for="input-password">Contrasenya</label>
-      <input type="password" id="input-password"
-             placeholder="••••••••" autocomplete="current-password">
-      <button class="btn-login" id="btn-login">Iniciar sessió</button>
-      <p id="login-error"></p>
+<!-- ══════════════════════════ LOGIN ══════════════════════════ -->
+<div id="pantalla-login">
+  <div class="login-card">
+    <div class="escola-logo">
+      <h1>Escola<br><span style="color:var(--blau-mig)">Amadeu Vives</span></h1>
+      <p>Gestió d'Horaris — Administrador</p>
     </div>
+    <label for="input-email">Correu electrònic</label>
+    <input type="email" id="input-email" placeholder="admin@escolaamadeu.cat" autocomplete="email">
+    <label for="input-password">Contrasenya</label>
+    <input type="password" id="input-password" placeholder="••••••••" autocomplete="current-password">
+    <button class="btn-login" id="btn-login">Iniciar sessió</button>
+    <p id="login-error"></p>
   </div>
+</div>
 
-  <!-- ══════════════════════════════════════════════
-       PANTALLA DASHBOARD
-  ═════════════════════════════════════════════════ -->
-  <div id="pantalla-dashboard" style="display:none">
+<!-- ══════════════════════════ DASHBOARD ══════════════════════════ -->
+<div id="pantalla-dashboard" style="display:none">
 
-    <!-- Navbar -->
-    <nav class="navbar-escola">
-      <div class="marca">Escola <span>Amadeu Vives</span></div>
-      <div class="navbar-info">
-        <span class="nom-usuari" id="nav-nom"></span>
-        <span class="badge-rol"  id="nav-rol"></span>
-        <!-- Selector de curs escolar — poblat i mostrat per main.js després del login -->
-        <select id="selector-any-escolar"
-                class="selector-any-escolar"
-                title="Selecciona el curs escolar"
-                aria-label="Curs escolar"
-                style="display:none">
-        </select>
-        <!-- Botons d'accés ràpid al panell admin (visibles només per a rol=admin) -->
-        <div id="link-admin" class="admin-links-grup" style="display:none">
-          <a href="admin.html#horaris"       class="btn-logout" title="Gestionar franges horàries">📅 Horaris</a>
-          <a href="admin.html#extraescolars" class="btn-logout" title="Gestionar activitats extraescolars">⚽ Extraescolars</a>
-          <a href="admin.html#dies-especials" class="btn-logout" title="Gestionar festius, excursions i colònies">📆 Dies Especials</a>
-        </div>
-        <button class="btn-logout" id="btn-logout">Sortir</button>
-      </div>
-    </nav>
+  <!-- Navbar -->
+  <nav class="navbar-escola">
+    <div class="marca">Escola <span>Amadeu Vives</span></div>
+    <div class="navbar-info">
+      <span class="nom-usuari" id="nav-nom"></span>
+      <span class="badge-rol">Admin</span>
+      <select id="selector-any-escolar" class="selector-any-escolar" title="Curs escolar" style="display:none"></select>
+      <button class="btn-logout" id="btn-pdf"   title="Descarregar horari en PDF">⬇ PDF</button>
+      <button class="btn-logout" id="btn-excel" title="Descarregar horari en Excel">📥 Excel</button>
+      <button class="btn-logout" id="btn-logout">Sortir</button>
+    </div>
+  </nav>
 
-    <main class="main-content">
+  <main class="main-content">
 
-      <!-- Estadístiques -->
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-icona blau">📚</div>
-          <div>
-            <div class="xifra" id="stat-classes">—</div>
-            <div class="etiqueta">Classes setmanals</div>
+    <!-- ════ TABS ════ -->
+    <ul class="nav nav-tabs mb-3" id="mainTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-horaris" type="button">📅 Horaris</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-nova-franja" type="button">➕ Nova Franja</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-professors" type="button">👨‍🏫 Professors</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-grups" type="button">👥 Grups</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-assignatures" type="button">📖 Matèries</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-aules" type="button">🏫 Aules</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-ct" type="button">📌 Classes Temp.</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-dies" type="button">📆 Dies Especials</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-curs" type="button">🎓 Any Escolar</button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+
+      <!-- ══ TAB: HORARIS ══════════════════════════════════════════════════════ -->
+      <div class="tab-pane fade show active" id="tab-horaris" role="tabpanel">
+
+        <div class="calendari-controls">
+          <h2 id="titol-calendari">Horari</h2>
+          <div class="vista-toggle">
+            <button class="btn-vista active" id="btn-vista-grup">👥 Grup</button>
+            <button class="btn-vista" id="btn-vista-prof">👨‍🏫 Professor</button>
+          </div>
+          <select class="selector-grup" id="selector-grup">
+            <option value="">— Selecciona un grup —</option>
+          </select>
+          <select class="selector-grup" id="selector-professor" style="display:none">
+            <option value="">— Selecciona un professor —</option>
+          </select>
+          <div class="nav-setmana">
+            <button class="btn-setmana" id="btn-anterior">← Anterior</button>
+            <span class="label-setmana" id="label-setmana"></span>
+            <button class="btn-setmana" id="btn-seguent">Següent →</button>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icona groc">🏫</div>
-          <div>
-            <div class="xifra" id="stat-aules">—</div>
-            <div class="etiqueta">Aules en ús</div>
-          </div>
+
+        <!-- Llegenda de dies especials i hora actual -->
+        <div class="cal-llegenda" id="cal-llegenda" style="display:none">
+          <span class="leg"><span class="leg-dot" style="background:#fca5a5"></span>Festiu</span>
+          <span class="leg"><span class="leg-dot" style="background:#86efac"></span>Excursió</span>
+          <span class="leg"><span class="leg-dot" style="background:#d8b4fe"></span>Colònies</span>
+          <span class="leg" style="color:var(--text-clar);border-left:1px solid var(--gris-vora);padding-left:14px">
+            <span class="leg-line"></span>Hora actual
+          </span>
         </div>
-        <div class="stat-card">
-          <div class="stat-icona verd">✅</div>
-          <div>
-            <div class="xifra" id="stat-assignatures">—</div>
-            <div class="etiqueta">Assignatures</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- ══════════════════════════════════════════
-           PESTANYES BOOTSTRAP
-      ═══════════════════════════════════════════ -->
-      <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="horari-tab"
-                  data-bs-toggle="tab" data-bs-target="#horari"
-                  type="button" role="tab">
-            📅 El meu Horari
-          </button>
-        </li>
-        <li class="nav-item" role="presentation" id="li-tab-activitats"
-            style="display:none">
-          <button class="nav-link" id="activitats-tab"
-                  data-bs-toggle="tab" data-bs-target="#activitats"
-                  type="button" role="tab">
-            ⚽ Activitats Extraescolars
-          </button>
-        </li>
-      </ul>
-
-      <div class="tab-content" id="myTabContent">
-
-        <!-- ── PANELL HORARI ──────────────────────── -->
-        <div class="tab-pane fade show active"
-             id="horari" role="tabpanel">
-
-          <!-- Controls del calendari -->
-          <div class="calendari-controls">
-            <h2 id="titol-calendari">El meu Horari</h2>
-
-            <!-- Selector de grup (admin) — poblat dinàmicament per main.js -->
-            <select class="selector-grup" id="selector-grup"
-                    style="display:none">
-              <option value="">— Selecciona un grup —</option>
-            </select>
-
-            <!-- Selector vista professor (personal/tutoria) -->
-            <select class="selector-grup" id="selector-profesor"
-                    style="display:none">
-              <option value="personal">La meva feina</option>
-            </select>
-
-            <!-- Selector fill (família >1 fill) -->
-            <select class="selector-grup" id="selector-fill"
-                    style="display:none">
-            </select>
-
-            <!-- Navegació setmanes -->
-            <div class="nav-setmana">
-              <button class="btn-setmana" id="btn-anterior">← Anterior</button>
-              <span   class="label-setmana" id="label-setmana"></span>
-              <button class="btn-setmana" id="btn-seguent">Següent →</button>
+        <div class="cal-amb-recompte">
+          <div class="cal-outer" id="calendari-wrapper">
+            <!-- Capçalera (sincronitzada amb el cos via overflow del pare) -->
+            <div id="calendari-caps" class="cal-head"></div>
+            <!-- Cos desplaçable verticalment -->
+            <div class="cal-scroll">
+              <div id="calendari-body" class="cal-body">
+                <p class="missatge-buit" style="grid-column:1/-1;padding:2rem">
+                  Selecciona un grup per veure l'horari.
+                </p>
+              </div>
             </div>
           </div>
-
-          <!-- Calendari -->
-          <div class="calendari-wrapper">
-            <div class="calendari-grid" id="calendari-grid"></div>
-          </div>
-
+          <!-- Recompte d'hores lectius per matèria (sidebar dret) -->
+          <div id="cal-recompte" class="cal-recompte" style="display:none"></div>
         </div>
 
-        <!-- ── PANELL ACTIVITATS ──────────────────── -->
-        <div class="tab-pane fade"
-             id="activitats" role="tabpanel">
+      </div>
 
-          <div class="calendari-controls" style="margin-top:1rem">
-            <h2>Activitats Extraescolars</h2>
+      <!-- ══ TAB: NOVA FRANJA ═══════════════════════════════════════════════════ -->
+      <div class="tab-pane fade" id="tab-nova-franja" role="tabpanel">
+        <div class="form-panel">
+          <h5>➕ Afegir franja horària setmanal</h5>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Dia *</label>
+              <select id="h-dia">
+                <option value="">Selecciona</option>
+                <option>Dilluns</option><option>Dimarts</option><option>Dimecres</option>
+                <option>Dijous</option><option>Divendres</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Hora inici *</label>
+              <div class="hora-combo">
+                <select id="h-inici-sel" class="hora-sel"></select>
+                <input id="h-inici" type="text" placeholder="HH:MM" maxlength="5" class="hora-input">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Hora fi *</label>
+              <div class="hora-combo">
+                <select id="h-fi-sel" class="hora-sel"></select>
+                <input id="h-fi" type="text" placeholder="HH:MM" maxlength="5" class="hora-input">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Matèria *</label>
+              <select id="h-asignatura"><option value="">Selecciona</option></select>
+            </div>
+            <div class="form-group">
+              <label>Professor Titular *</label>
+              <select id="h-prof-titular"><option value="">Selecciona</option></select>
+            </div>
+            <div class="form-group">
+              <label>Aula *</label>
+              <select id="h-aula"><option value="">Selecciona</option></select>
+            </div>
+            <div class="form-group" style="min-width:180px">
+              <label>Grups * <small class="text-muted">(Ctrl+clic per a múltiple)</small></label>
+              <select id="h-grups-form" multiple size="4" style="height:auto"></select>
+            </div>
+            <div class="form-group btn-grup" style="align-self:flex-end">
+              <button id="btn-crear-horari" class="btn-accio">Crear franja</button>
+            </div>
           </div>
-          <div class="activitats-grid" id="activitats-grid">
-            <p style="color:var(--text-clar);font-size:.9rem">
-              Carregant activitats...
-            </p>
+          <!-- Professors de suport (opcionals) -->
+          <div class="prof-suport-section">
+            <div class="prof-suport-header">
+              <span>Professors de suport <small class="text-muted">(opcionals)</small></span>
+              <button type="button" id="btn-add-prof-suport" class="btn-secondary-sm">+ Afegir</button>
+            </div>
+            <div id="prof-suport-container"></div>
           </div>
-
+          <p id="horari-msg" class="msg-result mt-2"></p>
         </div>
+      </div>
 
-      </div><!-- /tab-content -->
+      <!-- ══ TAB: PROFESSORS ════════════════════════════════════════════════════ -->
+      <div class="tab-pane fade" id="tab-professors" role="tabpanel">
+        <div class="form-panel">
+          <h5>➕ Nou professor</h5>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nom complet *</label>
+              <input id="p-nom" type="text" placeholder="Ex: Maria García">
+            </div>
+            <div class="form-group">
+              <label>Especialitat</label>
+              <input id="p-especialitat" type="text" placeholder="Ex: Matemàtiques">
+            </div>
+            <div class="form-group btn-grup">
+              <button id="btn-crear-professor" class="btn-accio">Afegir professor</button>
+            </div>
+          </div>
+        </div>
+        <div id="llista-professors" class="llista-items"></div>
+      </div>
 
-    </main>
-  </div>
+      <!-- ══ TAB: GRUPS ═════════════════════════════════════════════════════════ -->
+      <div class="tab-pane fade" id="tab-grups" role="tabpanel">
+        <div class="form-panel">
+          <h5>➕ Nou grup — Curs actiu: <span id="label-curs-actiu" style="color:var(--blau-mig)">—</span></h5>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nom del grup *</label>
+              <select id="g-nom-preset">
+                <option value="">— Selecciona un nom estàndard —</option>
+                <optgroup label="Educació Infantil">
+                  <option value="I3 A">I3 A</option><option value="I3 B">I3 B</option><option value="I3 C">I3 C</option>
+                  <option value="I4 A">I4 A</option><option value="I4 B">I4 B</option><option value="I4 C">I4 C</option>
+                  <option value="I5 A">I5 A</option><option value="I5 B">I5 B</option><option value="I5 C">I5 C</option>
+                </optgroup>
+                <optgroup label="Educació Primària">
+                  <option value="1r A">1r A</option><option value="1r B">1r B</option><option value="1r C">1r C</option>
+                  <option value="2n A">2n A</option><option value="2n B">2n B</option><option value="2n C">2n C</option>
+                  <option value="3r A">3r A</option><option value="3r B">3r B</option><option value="3r C">3r C</option>
+                  <option value="4t A">4t A</option><option value="4t B">4t B</option><option value="4t C">4t C</option>
+                  <option value="5è A">5è A</option><option value="5è B">5è B</option><option value="5è C">5è C</option>
+                  <option value="6è A">6è A</option><option value="6è B">6è B</option><option value="6è C">6è C</option>
+                </optgroup>
+              </select>
+              <input id="g-nom" type="text" placeholder="O escriu el nom manualment" style="margin-top:4px">
+            </div>
+            <div class="form-group">
+              <label>Curs/Nivell *</label>
+              <select id="g-curs-preset">
+                <option value="">— Selecciona un nivell —</option>
+                <optgroup label="Educació Infantil">
+                  <option value="Infantil I3">I3</option>
+                  <option value="Infantil I4">I4</option>
+                  <option value="Infantil I5">I5</option>
+                </optgroup>
+                <optgroup label="Educació Primària">
+                  <option value="1r de Primària">1r de Primària</option>
+                  <option value="2n de Primària">2n de Primària</option>
+                  <option value="3r de Primària">3r de Primària</option>
+                  <option value="4t de Primària">4t de Primària</option>
+                  <option value="5è de Primària">5è de Primària</option>
+                  <option value="6è de Primària">6è de Primària</option>
+                </optgroup>
+              </select>
+              <input id="g-curs" type="text" placeholder="O escriu el nivell manualment" style="margin-top:4px">
+            </div>
+            <div class="form-group btn-grup">
+              <button id="btn-crear-grup" class="btn-accio">Afegir grup</button>
+            </div>
+          </div>
+        </div>
+        <div id="llista-grups" class="llista-items"></div>
+      </div>
 
-  <!-- Scripts — ordre important -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/main.js"></script>
+      <!-- ══ TAB: MATÈRIES (antic Assignatures) ══════════════════════════════════ -->
+      <div class="tab-pane fade" id="tab-assignatures" role="tabpanel">
+        <div class="form-panel">
+          <h5>➕ Nova matèria</h5>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nom de la matèria *</label>
+              <input id="a-nom" type="text" placeholder="Ex: Matemàtiques">
+            </div>
+            <div class="form-group" style="max-width:120px">
+              <label>Color al calendari</label>
+              <input id="a-color" type="color" value="#1565c0" style="height:42px;cursor:pointer">
+            </div>
+            <div class="form-group btn-grup">
+              <button id="btn-crear-assignatura" class="btn-accio">Afegir matèria</button>
+            </div>
+          </div>
+        </div>
+        <!-- Formulari d'edició inline (ocult fins que s'activi) -->
+        <div id="edit-materia-panel" class="form-panel" style="display:none;border:2px solid var(--blau-mig)">
+          <h5>✏ Editar matèria</h5>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nom de la matèria *</label>
+              <input id="edit-a-nom" type="text">
+            </div>
+            <div class="form-group" style="max-width:120px">
+              <label>Color al calendari</label>
+              <input id="edit-a-color" type="color" style="height:42px;cursor:pointer">
+            </div>
+            <div class="form-group btn-grup" style="gap:0.5rem;display:flex">
+              <button id="btn-guardar-materia" class="btn-accio">Guardar</button>
+              <button id="btn-cancel-materia" class="btn-accio" style="background:var(--text-clar)">Cancel·la</button>
+            </div>
+          </div>
+          <p id="edit-materia-msg" class="msg-result mt-2"></p>
+        </div>
+        <div id="llista-assignatures" class="llista-items"></div>
+      </div>
+
+      <!-- ══ TAB: AULES ═════════════════════════════════════════════════════════ -->
+      <div class="tab-pane fade" id="tab-aules" role="tabpanel">
+        <div class="form-panel">
+          <h5>➕ Nova aula</h5>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nom de l'aula *</label>
+              <input id="au-nom" type="text" placeholder="Ex: Aula 1r A">
+            </div>
+            <div class="form-group btn-grup">
+              <button id="btn-crear-aula" class="btn-accio">Afegir aula</button>
+            </div>
+          </div>
+        </div>
+        <div id="llista-aules" class="llista-items"></div>
+      </div>
+
+      <!-- ══ TAB: CLASSES TEMPORALS ════════════════════════════════════════════ -->
+      <div class="tab-pane fade" id="tab-ct" role="tabpanel">
+        <div class="form-panel">
+          <h5>📌 Nova classe temporal <small class="text-muted fw-normal">(afecta un sol dia del calendari)</small></h5>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Data *</label>
+              <input id="ct-data" type="date">
+            </div>
+            <div class="form-group">
+              <label>Grup *</label>
+              <select id="ct-grup"><option value="">Selecciona</option></select>
+            </div>
+            <div class="form-group">
+              <label>Matèria *</label>
+              <select id="ct-asignatura"><option value="">Selecciona</option></select>
+            </div>
+            <div class="form-group">
+              <label>Professor</label>
+              <select id="ct-professor"><option value="">Cap (opcional)</option></select>
+            </div>
+            <div class="form-group">
+              <label>Aula</label>
+              <select id="ct-aula"><option value="">Cap (opcional)</option></select>
+            </div>
+            <div class="form-group">
+              <label>Hora inici *</label>
+              <div class="hora-combo">
+                <select id="ct-inici-sel" class="hora-sel"></select>
+                <input id="ct-inici" type="text" placeholder="HH:MM" maxlength="5" class="hora-input">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Hora fi *</label>
+              <div class="hora-combo">
+                <select id="ct-fi-sel" class="hora-sel"></select>
+                <input id="ct-fi" type="text" placeholder="HH:MM" maxlength="5" class="hora-input">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Nota</label>
+              <input id="ct-nota" type="text" placeholder="Opcional">
+            </div>
+            <div class="form-group btn-grup">
+              <button id="btn-crear-ct" class="btn-accio">Crear classe</button>
+            </div>
+          </div>
+          <p id="ct-msg" class="msg-result mt-2"></p>
+        </div>
+        <div id="llista-ct" class="llista-items"></div>
+      </div>
+
+      <!-- ══ TAB: DIES ESPECIALS ════════════════════════════════════════════════ -->
+      <div class="tab-pane fade" id="tab-dies" role="tabpanel">
+        <div class="form-panel">
+          <h5>📆 Nou dia especial</h5>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nom de l'event *</label>
+              <input id="de-nom" type="text" placeholder="Ex: Dia del Treballador">
+            </div>
+            <div class="form-group">
+              <label>Tipus</label>
+              <select id="de-tipus">
+                <option value="festiu">Festiu</option>
+                <option value="excursio">Excursió</option>
+                <option value="colonies">Colònies</option>
+                <option value="altre">Altre</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Data inici *</label>
+              <input id="de-inici" type="date">
+            </div>
+            <div class="form-group">
+              <label>Data fi *</label>
+              <input id="de-fi" type="date">
+            </div>
+            <div class="form-group">
+              <label>Grup afectat</label>
+              <select id="de-grup"><option value="">Tots (global)</option></select>
+            </div>
+            <div class="form-group btn-grup">
+              <button id="btn-crear-de" class="btn-accio">Afegir event</button>
+            </div>
+          </div>
+          <p id="de-msg" class="msg-result mt-2"></p>
+        </div>
+        <div id="llista-de" class="llista-items"></div>
+      </div>
+
+      <!-- ══ TAB: ANY ESCOLAR ═══════════════════════════════════════════════════ -->
+      <div class="tab-pane fade" id="tab-curs" role="tabpanel">
+        <div class="form-panel">
+          <h5>🎓 Nou any escolar</h5>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Any escolar * <small class="text-muted">(format AAAA/AAAA)</small></label>
+              <input id="cc-any" type="text" placeholder="Ex: 2026/2027" maxlength="9">
+            </div>
+            <div class="form-group">
+              <label>Data inici *</label>
+              <input id="cc-inici" type="date">
+            </div>
+            <div class="form-group">
+              <label>Data fi *</label>
+              <input id="cc-fi" type="date">
+            </div>
+            <div class="form-group btn-grup">
+              <button id="btn-crear-curs" class="btn-accio">Crear curs</button>
+            </div>
+          </div>
+          <p id="cc-msg" class="msg-result mt-2"></p>
+        </div>
+        <div id="llista-cursos" class="llista-items"></div>
+      </div>
+
+    </div><!-- /tab-content -->
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>

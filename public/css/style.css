@@ -138,7 +138,7 @@ body {
 
 .navbar-escola {
   background:  var(--blau-fosc);
-  padding:     0.75rem 1.5rem;
+  padding:     0.5rem 1.5rem;
   display:     flex;
   align-items: center;
   justify-content: space-between;
@@ -194,25 +194,25 @@ body {
 
 .btn-logout:hover { background: rgba(255,255,255,0.1); border-color: var(--blanc); }
 
-/* ── Contingut principal ────────────────────────────────── */
+/* ── Contingut principal (ample total de la finestra) ───── */
 .main-content {
-  max-width: 1400px;
-  margin:    0 auto;
-  padding:   1.5rem;
+  max-width: none;
+  margin:    0;
+  padding:   0.6rem 1rem 0;
 }
 
 /* ── Controls del calendari ─────────────────────────────── */
 .calendari-controls {
   display:       flex;
   align-items:   center;
-  gap:           1rem;
-  margin-bottom: 1.25rem;
+  gap:           0.6rem;
+  margin-bottom: 0.4rem;
   flex-wrap:     wrap;
 }
 
 .calendari-controls h2 {
   font-family: var(--font-display);
-  font-size:   1.4rem;
+  font-size:   1.15rem;
   color:       var(--blau-fosc);
   flex:        1;
 }
@@ -248,6 +248,41 @@ body {
 }
 
 .btn-carregar:hover { background: var(--blau-fosc); }
+
+/* ── Toggle vista grup / professor ─────────────────────── */
+.vista-toggle {
+  display:       flex;
+  border:        1.5px solid var(--gris-vora);
+  border-radius: var(--radi);
+  overflow:      hidden;
+  flex-shrink:   0;
+}
+
+.btn-vista {
+  padding:     0.45rem 1rem;
+  background:  var(--blanc);
+  border:      none;
+  font-family: var(--font-cos);
+  font-size:   0.85rem;
+  font-weight: 500;
+  color:       var(--text-mig);
+  cursor:      pointer;
+  transition:  background var(--transicio), color var(--transicio);
+  white-space: nowrap;
+}
+
+.btn-vista:first-child { border-right: 1.5px solid var(--gris-vora); }
+
+.btn-vista.active {
+  background: var(--blau-mig);
+  color:      var(--blanc);
+  font-weight: 600;
+}
+
+.btn-vista:not(.active):hover {
+  background: var(--blau-clar);
+  color:      var(--blau-mig);
+}
 
 /* ── Graella del calendari ──────────────────────────────── */
 .calendari-wrapper {
@@ -748,6 +783,472 @@ body {
   box-shadow:     0 0 0 2px rgba(245,158,11,0.25);
 }
 
+/* ══════════════════════════════════════════════════════════
+   FORMULARIS AMB LABELS (form-grid)
+   ══════════════════════════════════════════════════════════ */
+
+.form-grid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap:                   0.75rem 1rem;
+  align-items:           end;
+}
+
+.form-group {
+  display:        flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size:      0.72rem;
+  font-weight:    600;
+  color:          var(--text-mig);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom:  0.3rem;
+  display:        block;
+}
+
+.form-group input,
+.form-group select {
+  padding:       0.52rem 0.8rem;
+  border:        1.5px solid var(--gris-vora);
+  border-radius: 8px;
+  font-family:   var(--font-cos);
+  font-size:     0.9rem;
+  color:         var(--text-fosc);
+  background:    var(--blanc);
+  transition:    border-color var(--transicio);
+  width:         100%;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline:      none;
+  border-color: var(--blau-mig);
+  box-shadow:   0 0 0 3px rgba(37,99,168,0.1);
+}
+
+.form-group .hora-input {
+  font-family: 'Courier New', monospace;
+  text-align:  center;
+  font-size:   0.95rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group.btn-grup {
+  justify-content: flex-end;
+  padding-bottom:  1px;
+}
+
+/* ── Seccions per any (grups organitzats) ─────────────────── */
+.any-seccio {
+  margin-bottom: 1.25rem;
+}
+
+.any-seccio-titol {
+  display:        flex;
+  align-items:    center;
+  justify-content: space-between;
+  font-family:    var(--font-display);
+  font-size:      0.95rem;
+  font-weight:    700;
+  color:          var(--blau-fosc);
+  padding:        0.55rem 1rem;
+  background:     var(--blau-clar);
+  border-radius:  8px;
+  margin-bottom:  0.5rem;
+  border-left:    4px solid var(--blau-mig);
+}
+
+.badge-count {
+  background:    var(--blau-mig);
+  color:         white;
+  padding:       0.15rem 0.65rem;
+  border-radius: 20px;
+  font-size:     0.72rem;
+  font-family:   var(--font-cos);
+  font-weight:   600;
+}
+
+/* ── Tabs amb estil net ───────────────────────────────────── */
+.nav-tabs .nav-link {
+  color:       var(--text-mig);
+  font-size:   0.78rem;
+  font-weight: 500;
+  padding:     0.35rem 0.65rem;
+  border:      none;
+  border-bottom: 2px solid transparent;
+  transition:  all 0.2s ease;
+}
+
+.nav-tabs .nav-link:hover {
+  color:        var(--blau-mig);
+  border-color: transparent;
+  background:   var(--blau-clar);
+}
+
+.nav-tabs .nav-link.active {
+  color:         var(--blau-mig);
+  font-weight:   700;
+  border-bottom: 2px solid var(--blau-mig);
+  background:    var(--blanc);
+}
+
+.nav-tabs { margin-bottom: 0.4rem !important; }
+
+.tab-content { padding-top: 0.1rem; }
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD v2 — GRAELLA DINÀMICA (posicionament absolut)
+   PX_PER_MIN = 2px/minut = 120px/hora
+   Rang per defecte: 08:00 – 20:00 (720 min = 1440px)
+   ══════════════════════════════════════════════════════════ */
+
+:root {
+  --px-min:    2;       /* px per minut */
+  --hora-col:  60px;    /* amplada columna d'hores */
+  --taronja:   #f97316;
+}
+
+/* Capçaleres dels dies (fila fixa sobre la graella) */
+.calendari-caps {
+  display:              grid;
+  grid-template-columns: var(--hora-col) repeat(5, 1fr);
+  background:           var(--blau-fosc);
+  color:                var(--blanc);
+  border-radius:        12px 12px 0 0;
+  position:             sticky;
+  top:                  52px; /* altura navbar */
+  z-index:              20;
+  min-width:            600px;
+}
+
+.cap-hora-buit {
+  padding: 0.7rem 0.3rem;
+}
+
+.cap-dia-v2 {
+  padding:    0.7rem 0.5rem;
+  text-align: center;
+  font-size:  0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-left: 1px solid rgba(255,255,255,0.08);
+}
+
+.cap-dia-v2 .data-sub {
+  display:    block;
+  font-size:  0.7rem;
+  font-weight: 400;
+  opacity:    0.65;
+  margin-top: 2px;
+}
+
+.cap-dia-v2.dia-festiu   { background: rgba(239,68,68,0.35); }
+.cap-dia-v2.dia-excursio { background: rgba(16,185,129,0.35); }
+.cap-dia-v2.dia-colonies { background: rgba(139,92,246,0.35); }
+.banner-especial {
+  display:   block;
+  font-size: 0.65rem;
+  opacity:   0.9;
+  margin-top: 2px;
+}
+
+/* Cos del calendari: scroll horitzontal si cal */
+.calendari-body {
+  display:   flex;
+  min-width: 600px;
+  overflow-y: auto;
+  max-height: 75vh;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--gris-vora);
+  border-top: none;
+}
+
+/* Rail d'hores (columna esquerra) */
+.hora-rail {
+  width:       var(--hora-col);
+  flex-shrink: 0;
+  position:    relative;
+  background:  var(--gris-fons);
+  border-right: 1px solid var(--gris-vora);
+}
+
+.hora-label {
+  position:   absolute;
+  right:      6px;
+  font-size:  0.68rem;
+  color:      var(--text-clar);
+  transform:  translateY(-50%);
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* Columnes dels dies */
+.cols-wrap {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  flex: 1;
+  position: relative;
+}
+
+.dia-col {
+  position:   relative;
+  border-left: 1px solid var(--gris-vora);
+}
+
+.dia-col.dia-festiu   { background: rgba(239,68,68,0.04); }
+.dia-col.dia-excursio { background: rgba(16,185,129,0.04); }
+.dia-col.dia-colonies { background: rgba(139,92,246,0.04); }
+
+/* Línies d'hora (horitzontals) */
+.linia-hora {
+  position:   absolute;
+  left:       0; right: 0;
+  border-top: 1px dashed #e5e7eb;
+  pointer-events: none;
+}
+
+.linia-hora.hora-plena {
+  border-top-color: #d1d5db;
+  border-top-style: solid;
+}
+
+/* Blocs d'assignatura (posicionats absolutament) */
+.bloc-assignatura {
+  position:      absolute;
+  left:          3px; right: 3px;
+  border-radius: 6px;
+  padding:       3px 6px;
+  overflow:      hidden;
+  color:         white;
+  font-size:     0.75rem;
+  box-shadow:    0 1px 4px rgba(0,0,0,0.18);
+  cursor:        default;
+  transition:    transform 0.15s ease, box-shadow 0.15s ease;
+  animation:     apareixerBloc 0.25s ease;
+  display:       flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bloc-assignatura:hover {
+  transform:  translateY(-1px) scale(1.01);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index:    5;
+}
+
+.bloc-assignatura.temporal {
+  border:  2px dashed rgba(255,255,255,0.55);
+}
+
+.bloc-assignatura .nom-asig {
+  font-weight: 700;
+  white-space: nowrap;
+  overflow:    hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.bloc-assignatura .prof-aula {
+  font-size: 0.67rem;
+  opacity:   0.88;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bloc-assignatura .btn-del-horari {
+  position:      absolute;
+  top:           2px; right: 2px;
+  background:    rgba(0,0,0,0.25);
+  border:        none;
+  color:         white;
+  border-radius: 3px;
+  font-size:     0.6rem;
+  padding:       1px 4px;
+  cursor:        pointer;
+  opacity:       0;
+  transition:    opacity 0.15s;
+}
+
+.bloc-assignatura:hover .btn-del-horari { opacity: 1; }
+
+/* ══ Estils nous de UI ═══════════════════════════════════════ */
+
+.stat-icona.taronja { background: #ffedd5; }
+
+.form-panel {
+  background:    var(--blanc);
+  border:        1px solid var(--gris-vora);
+  border-radius: 12px;
+  padding:       1rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow:    var(--ombra);
+}
+
+.form-panel h5 {
+  font-size:     0.95rem;
+  font-weight:   700;
+  color:         var(--blau-fosc);
+  margin-bottom: 0.75rem;
+}
+
+.form-row-inline {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       0.5rem;
+  align-items: center;
+}
+
+.form-row-inline input,
+.form-row-inline select {
+  padding:       0.4rem 0.7rem;
+  border:        1.5px solid var(--gris-vora);
+  border-radius: 7px;
+  font-family:   var(--font-cos);
+  font-size:     0.88rem;
+  color:         var(--text-fosc);
+  background:    var(--blanc);
+  transition:    border-color var(--transicio);
+}
+
+.form-row-inline input:focus,
+.form-row-inline select:focus {
+  outline:      none;
+  border-color: var(--blau-mig);
+  box-shadow:   0 0 0 2px rgba(37,99,168,0.1);
+}
+
+.hora-input {
+  width: 72px !important;
+  text-align: center;
+  font-family: 'Courier New', monospace !important;
+}
+
+.hora-input.error { border-color: var(--vermell-err) !important; }
+
+.btn-accio {
+  background:    var(--blau-mig);
+  color:         var(--blanc);
+  border:        none;
+  border-radius: 7px;
+  padding:       0.45rem 1rem;
+  font-family:   var(--font-cos);
+  font-size:     0.88rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    background var(--transicio);
+  white-space:   nowrap;
+}
+
+.btn-accio:hover { background: var(--blau-fosc); }
+
+.msg-result {
+  font-size:  0.82rem;
+  margin-top: 0.5rem;
+  min-height: 1.2em;
+}
+
+.msg-result.ok  { color: var(--verd-ok); }
+.msg-result.err { color: var(--vermell-err); }
+
+/* Llistes d'items (professors, grups, etc.) */
+.llista-items { display: flex; flex-direction: column; gap: 0.4rem; padding: 0.25rem 0; }
+
+.item-row {
+  display:       flex;
+  align-items:   center;
+  justify-content: space-between;
+  background:    var(--blanc);
+  border:        1px solid var(--gris-vora);
+  border-radius: 8px;
+  padding:       0.55rem 1rem;
+  box-shadow:    0 1px 3px rgba(0,0,0,0.05);
+  animation:     pujarCard 0.25s ease;
+}
+
+.item-row .item-info { flex: 1; }
+
+.item-row .item-nom {
+  font-weight: 600;
+  color:       var(--text-fosc);
+  font-size:   0.9rem;
+}
+
+.item-row .item-sub {
+  font-size: 0.78rem;
+  color:     var(--text-mig);
+  margin-top: 1px;
+}
+
+.item-row .item-badge {
+  background:    var(--blau-clar);
+  color:         var(--blau-mig);
+  padding:       0.15rem 0.6rem;
+  border-radius: 20px;
+  font-size:     0.72rem;
+  font-weight:   500;
+  margin-left:   0.5rem;
+}
+
+.item-row .item-badge.actiu {
+  background: #d1fae5;
+  color:      var(--verd-ok);
+}
+
+.item-actions { display: flex; gap: 0.4rem; align-items: center; }
+
+.btn-delete {
+  background: transparent;
+  border:     1.5px solid #fca5a5;
+  color:      var(--vermell-err);
+  border-radius: 6px;
+  padding:    0.25rem 0.6rem;
+  font-size:  0.78rem;
+  cursor:     pointer;
+  transition: all 0.15s;
+}
+
+.btn-delete:hover { background: #fee2e2; }
+
+.btn-activar {
+  background: var(--verd-ok);
+  border:     none;
+  color:      white;
+  border-radius: 6px;
+  padding:    0.25rem 0.7rem;
+  font-size:  0.78rem;
+  cursor:     pointer;
+  transition: background 0.15s;
+}
+
+.btn-activar:hover { background: #059669; }
+
+.color-dot {
+  width:         14px;
+  height:        14px;
+  border-radius: 50%;
+  display:       inline-block;
+  margin-right:  0.4rem;
+  flex-shrink:   0;
+  border:        1px solid rgba(0,0,0,0.1);
+}
+
+/* Dies especials: capçalera colorada al calendari */
+.dia-cap-event {
+  font-size:   0.65rem;
+  color:       rgba(255,255,255,0.8);
+  display:     block;
+  margin-top:  2px;
+}
+
+
 .selector-any-escolar option {
   background:  #1a2e4a;
   color:       #ffffff;
@@ -826,3 +1327,679 @@ body {
   opacity:        0.9;
   text-transform: none;
 }
+
+/* ══════════════════════════════════════════════════════════
+   CALENDARI DINÀMIC v3 — Grid unificat, alineació perfecta
+   Colors fidels a les captures de l'aplicació original.
+   ══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════
+   VARIABLES PRINCIPALS DEL CALENDARI
+   Nomenclatura: --color-primary, --festiu-bg, etc.
+   ═══════════════════════════════════════════════════════ */
+:root {
+  /* Paleta global */
+  --color-primary:   #1e293b;   /* capçalera dies normals */
+  --color-primary-dark: #0f172a; /* zona temps (esquerra) */
+  --color-border:    #e2e8f0;   /* línies hora sencera */
+  --color-border-hh: #f1f5f9;   /* línies mitja hora */
+  --color-time-bg:   #f8fafc;   /* fons columna temps */
+  --color-time-text: #94a3b8;   /* text etiquetes d'hora */
+
+  /* ── FESTIU — rosa/salmó (#fca5a5) ─────────────── */
+  --festiu-bg:     #fca5a5;   /* capçalera del dia */
+  --festiu-text:   #7f1d1d;   /* text capçalera */
+  --festiu-col-bg: #fff1f2;   /* fons columna (molt suau) */
+
+  /* ── EXCURSIÓ — verd menta (#bbf7d0) ───────────── */
+  --excursio-bg:     #86efac;             /* capçalera */
+  --excursio-text:   #14532d;             /* text capçalera */
+  --excursio-col-bg: rgba(187,247,208,.3); /* #bbf7d0 translúcid */
+
+  /* ── COLÒNIES — violeta/lila (#e9d5ff) ─────────── */
+  --colonies-bg:     #d8b4fe;   /* capçalera */
+  --colonies-text:   #3b0764;   /* text capçalera */
+  --colonies-col-bg: #e9d5ff;   /* fons columna */
+
+  /* Aliases per compatibilitat interna */
+  --festiu-cap:  var(--festiu-bg);
+  --festiu-fons: var(--festiu-col-bg);
+  --excursio-cap:  var(--excursio-bg);
+  --excursio-fons: var(--excursio-col-bg);
+  --colonies-cap:  var(--colonies-bg);
+  --colonies-fons: var(--colonies-col-bg);
+
+  /* Graella: PX_MIN(1.4) × 30 min = 42 px/slot (com al widget) */
+  --slot-h: 42px;
+}
+
+/* ── Contenidor extern ──────────────────────────────── */
+.cal-outer {
+  background:    var(--blanc);
+  border-radius: 14px;
+  border:        1px solid var(--gris-vora);
+  box-shadow:    var(--ombra);
+  overflow:      hidden;
+}
+
+/* Ambdues zones usen el MATEIX grid per alineació perfecta */
+.cal-head,
+.cal-body {
+  display:               grid;
+  grid-template-columns: 64px repeat(5, 1fr);
+  min-width:             640px;
+}
+
+/* ── Capçalera ─────────────────────────────────────── */
+.cal-head { background: var(--color-primary); }
+
+/* Cel·la buida (intersecció capçalera × columna temps) */
+.cal-h-buit {
+  background:   var(--color-primary-dark);
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Cel·les de dia — text centrat, majúscules, blanc */
+.cal-h-dia {
+  color:          #ffffff;
+  text-align:     center;
+  padding:        0.5rem 0.5rem 0.4rem;
+  font-size:      0.78rem;
+  font-weight:    700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-left:    1px solid rgba(255,255,255,0.08);
+  line-height:    1.2;
+}
+
+.cal-h-dia .data-sub {
+  display:        block;
+  font-size:      0.68rem;
+  font-weight:    400;
+  opacity:        0.55;
+  margin-top:     3px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ── FESTIU: fons rosa/salmó (#fca5a5), text fosc ── */
+.cal-h-dia.dia-festiu {
+  background:        var(--festiu-bg);
+  color:             var(--festiu-text);
+  border-left-color: rgba(0,0,0,0.06);
+}
+.cal-h-dia.dia-festiu .data-sub { opacity: 0.65; }
+
+/* ── EXCURSIÓ: fons verd menta (#86efac), text fosc ─ */
+.cal-h-dia.dia-excursio {
+  background:        var(--excursio-bg);
+  color:             var(--excursio-text);
+  border-left-color: rgba(0,0,0,0.06);
+}
+.cal-h-dia.dia-excursio .data-sub { opacity: 0.65; }
+
+/* ── COLÒNIES: fons violeta/lila (#d8b4fe), text fosc */
+.cal-h-dia.dia-colonies {
+  background:        var(--colonies-bg);
+  color:             var(--colonies-text);
+  border-left-color: rgba(0,0,0,0.06);
+}
+.cal-h-dia.dia-colonies .data-sub { opacity: 0.65; }
+
+/* Nom de l'event dins la capçalera (banner) */
+.cal-h-dia .banner-especial {
+  display:        block;
+  font-size:      0.64rem;
+  font-weight:    500;
+  margin-top:     3px;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+}
+
+/* ── Zona de desplaçament (alçada fixada per la regla al final del fitxer) ─── */
+.cal-scroll {
+  overflow-y: auto;
+  overflow-x: visible;
+  max-height: none;
+}
+
+/* ── Columna de temps (eix horitzontal 08:00, 08:30…) */
+.cal-time-col {
+  position:     relative;
+  background:   var(--color-time-bg);
+  border-right: 1px solid var(--color-border);
+  /* height fixat per JS */
+}
+
+/* Etiquetes d'hora — gris azulado suau, centrades verticalment */
+.cal-time-label {
+  position:    absolute;
+  right:       8px;
+  font-size:   0.67rem;
+  font-weight: 500;
+  color:       var(--color-time-text);
+  transform:   translateY(-50%);
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* ── Columnes de dies (DL → DV) ─────────────────────
+   Les línies guia s'apliquen via background-image CSS:
+   • Hora sencera  (cada 2×slot-h = 120px): #e2e8f0 sòlid
+   • Mitja hora    (cada slot-h = 60px):    #f1f5f9 subtil
+   Sincronitzat amb PX_MIN=2 → 30 min = 60 px
+*/
+.cal-dia-col {
+  position:         relative;
+  border-left:      1px solid var(--color-border);
+  background-color: #ffffff;
+  background-image:
+    /* Línies hora sencera — #e2e8f0 com al spec */
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--slot-h) * 2 - 1px),
+      var(--color-border) calc(var(--slot-h) * 2 - 1px),
+      var(--color-border) calc(var(--slot-h) * 2)
+    ),
+    /* Línies mitja hora — molt subtils */
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--slot-h) - 1px),
+      var(--color-border-hh) calc(var(--slot-h) - 1px),
+      var(--color-border-hh) var(--slot-h)
+    );
+  /* height fixat per JS */
+}
+
+/*
+  ── Dies especials: tenyeix la columna sencera ──────
+  background-color s'aplica sota el background-image
+  (les línies guia segueixen visibles sobre el color)
+*/
+
+/* FESTIU: fons #fff1f2 (salmó molt clar) */
+.cal-dia-col.dia-festiu   { background-color: var(--festiu-col-bg);   }
+
+/* EXCURSIÓ: fons rgba(187,247,208,.3) = #bbf7d0 translúcid */
+.cal-dia-col.dia-excursio { background-color: var(--excursio-col-bg); }
+
+/* COLÒNIES: fons #e9d5ff (violeta/lila clar) */
+.cal-dia-col.dia-colonies { background-color: var(--colonies-col-bg); }
+
+/* ── Blocs d'assignatura — fidel al widget de referència ── */
+.bloc-assignatura {
+  position:       absolute;
+  left:           4px; right: 4px;
+  border-radius:  8px;
+  padding:        5px 8px 4px;
+  overflow:       hidden;
+  color:          #ffffff;
+  box-shadow:     0 1px 3px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.1);
+  cursor:         default;
+  transition:     transform 0.12s ease, box-shadow 0.12s ease;
+  animation:      apareixerBloc 0.2s ease;
+  display:        flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height:     22px;
+  z-index:        2;
+}
+
+/* Franja vertical esquerra (accent fosc sobre el color) */
+.bloc-assignatura::before {
+  content:       '';
+  position:      absolute;
+  left: 0; top: 0; bottom: 0;
+  width:         3px;
+  background:    rgba(0,0,0,0.18);
+  border-radius: 8px 0 0 8px;
+}
+
+.bloc-assignatura:hover {
+  transform:  translateY(-1px) scale(1.005);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+  z-index:    5;
+}
+
+.bloc-assignatura.temporal {
+  border: 2px dashed rgba(255,255,255,0.5);
+}
+
+/* Tres línies de text — idèntiques al widget */
+.bl-nom {
+  font-size:     0.77rem;
+  font-weight:   700;
+  line-height:   1.2;
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  text-shadow:   0 1px 2px rgba(0,0,0,0.15);
+}
+
+.bl-prof {
+  font-size:     0.66rem;
+  opacity:       0.88;
+  margin-top:    2px;
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+.bl-prof-sup {
+  font-size:   0.88em;
+  opacity:     0.75;
+}
+
+.bl-hora {
+  font-size:     0.62rem;
+  opacity:       0.70;
+  margin-top:    1px;
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botó d'eliminar — apareix en hover */
+.btn-del-horari {
+  position:      absolute;
+  top:           3px; right: 3px;
+  background:    rgba(0,0,0,0.22);
+  border:        none;
+  color:         rgba(255,255,255,0.9);
+  border-radius: 4px;
+  font-size:     0.6rem;
+  padding:       1px 5px;
+  cursor:        pointer;
+  opacity:       0;
+  transition:    opacity 0.15s, background 0.15s;
+  line-height:   1.6;
+}
+.bloc-assignatura:hover .btn-del-horari { opacity: 1; }
+.btn-del-horari:hover                   { background: rgba(200,0,0,0.6); }
+
+/* ── Desdoblamens ─────────────────────────────────────────── */
+.desdoblament-wrap {
+  position:       absolute;
+  left:           4px;
+  right:          4px;
+  display:        flex;
+  flex-direction: row;
+  gap:            3px;
+  align-items:    stretch;
+  z-index:        2;
+}
+.bloc-assignatura.inline {
+  position:   relative !important;
+  top:        auto !important;
+  height:     auto !important;
+  left:       auto !important;
+  right:      auto !important;
+  flex:       1;
+  min-width:  0;
+}
+
+/* Missatge buit dins la graella */
+.cal-body .missatge-buit {
+  grid-column: 1 / -1;
+  text-align:  center;
+  padding:     3rem 1rem;
+  color:       var(--text-clar);
+  font-size:   0.9rem;
+}
+
+/* ── Línia roja de l'hora actual ───────────────────── */
+.hora-actual {
+  position:       absolute;
+  left:           0; right: 0;
+  height:         2px;
+  background:     #ef4444;
+  z-index:        10;
+  pointer-events: none;
+}
+.hora-actual::before {
+  content:       '';
+  position:      absolute;
+  left:          -3px;
+  top:           -4px;
+  width:         10px;
+  height:        10px;
+  border-radius: 50%;
+  background:    #ef4444;
+}
+
+/* ── Llegenda del calendari ─────────────────────────── */
+.cal-llegenda {
+  display:     flex;
+  gap:         10px;
+  align-items: center;
+  flex-wrap:   wrap;
+  padding:     0.15rem 0.25rem 0.2rem;
+  font-size:   0.71rem;
+  color:       var(--text-mig);
+}
+
+.cal-llegenda .leg {
+  display:     flex;
+  align-items: center;
+  gap:         5px;
+}
+
+.cal-llegenda .leg-dot {
+  width:         11px;
+  height:        11px;
+  border-radius: 3px;
+  flex-shrink:   0;
+}
+
+.cal-llegenda .leg-line {
+  width:  20px;
+  height: 2px;
+  background: #ef4444;
+  flex-shrink: 0;
+  border-radius: 1px;
+}
+
+/* ── Scroll horitzontal sincronia header+body ────────── */
+/* El wrapper extern permet que header i body scrollin junts */
+.cal-outer {
+  overflow-x: auto;
+}
+
+.cal-head,
+.cal-body {
+  min-width: 600px;
+}
+
+/*
+  --cal-overhead: suma de totes les alçades fixes sobre el calendari
+  (navbar 42px + main-content padding 10px + tabs 30px + controls 38px +
+   llegenda 22px + cap-setmana 38px + cal-outer border 2px + marge 8px = ~190px)
+  Ajusta aquest valor si cal afinar.
+*/
+/*
+  --cal-overhead: suma aprox. de totes les alçades fixes sobre el calendari.
+  (navbar ~46px + main-content top ~10px + nav-tabs ~36px + controls ~56px +
+   llegenda ~26px + cap-dies ~44px + marges/gaps ~20px = ~238px)
+  PX_MIN dinàmic (calcPxMin) s'ajusta per omplir exactament l'espai disponible.
+*/
+:root { --cal-overhead: 240px; }
+
+.cal-scroll {
+  overflow-y:  auto;
+  overflow-x:  visible;
+  max-height:  none;
+  height:      calc(100vh - var(--cal-overhead));
+  padding-top: 12px;  /* marge per a l'etiqueta "08:00" (translateY -50%) */
+}
+
+/* ── Hora combo (select + input manual) ──────────────────── */
+.hora-combo {
+  display:   flex;
+  gap:       6px;
+  align-items: center;
+}
+.hora-sel {
+  flex:      1;
+  min-width: 0;
+  font-size: 0.85rem;
+}
+.hora-combo .hora-input {
+  width:     76px;
+  flex-shrink: 0;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+/* ── Botó editar matèria ─────────────────────────────────── */
+.btn-editar {
+  background:    var(--blau-mig);
+  color:         #fff;
+  border:        none;
+  border-radius: 6px;
+  padding:       4px 10px;
+  font-size:     0.78rem;
+  cursor:        pointer;
+  transition:    background 0.15s;
+}
+.btn-editar:hover { background: var(--blau-fosc); }
+
+/* ── Modal detall franja (SweetAlert2 custom) ────────────── */
+.swal-detall {
+  text-align:     left;
+  display:        flex;
+  flex-direction: column;
+  gap:            10px;
+  margin-top:     4px;
+}
+.swal-detall-capçalera {
+  border-radius: 10px;
+  padding:       14px 16px;
+  margin-bottom: 4px;
+}
+.swal-detall-capçalera .dl-nom {
+  font-size:   1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.swal-detall-capçalera .dl-hora {
+  font-size:   0.82rem;
+  margin-top:  4px;
+  opacity:     0.88;
+}
+.swal-info-fila {
+  display:       grid;
+  grid-template-columns: 80px 1fr;
+  align-items:   center;
+  gap:           6px;
+  font-size:     0.85rem;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 6px;
+}
+.swal-info-fila:last-of-type { border-bottom: none; }
+.swal-info-label {
+  font-size:   0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color:       var(--text-clar);
+}
+.swal-profs-list {
+  margin-top:    4px;
+  display:       flex;
+  flex-direction: column;
+  gap:           6px;
+}
+.swal-prof-item {
+  display:       flex;
+  align-items:   center;
+  justify-content: space-between;
+  background:    #f8fafc;
+  border:        1px solid #e2e8f0;
+  border-radius: 8px;
+  padding:       8px 12px;
+}
+.swal-prof-nom {
+  font-weight: 600;
+  font-size:   0.88rem;
+  color:       var(--blau-fosc);
+}
+.swal-prof-nom.baixa { text-decoration: line-through; color: #94a3b8; }
+.swal-prof-rol {
+  font-size:     0.7rem;
+  font-weight:   600;
+  background:    var(--blau-mig);
+  color:         #fff;
+  border-radius: 4px;
+  padding:       2px 7px;
+}
+.swal-prof-rol.rol-titular { background: var(--blau-fosc); }
+.swal-prof-rol.rol-baixa   { background: #ef4444; }
+
+/* ── Botó editar franja (modal detall) ───────────────────── */
+.swal-btn-editar {
+  background:    #f1f5f9 !important;
+  color:         var(--blau-fosc) !important;
+  border:        1px solid #cbd5e1 !important;
+  font-size:     0.82rem !important;
+  padding:       6px 16px !important;
+  box-shadow:    none !important;
+}
+.swal-btn-editar:hover {
+  background:    #e2e8f0 !important;
+}
+
+/* ── Gestió baixa professors ─────────────────────────────── */
+.badge-baixa {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           4px;
+  font-size:     0.68rem;
+  font-weight:   700;
+  background:    #fee2e2;
+  color:         #dc2626;
+  border-radius: 4px;
+  padding:       2px 6px;
+}
+.badge-actiu {
+  display:       inline-flex;
+  align-items:   center;
+  font-size:     0.68rem;
+  font-weight:   700;
+  background:    #dcfce7;
+  color:         #16a34a;
+  border-radius: 4px;
+  padding:       2px 6px;
+}
+.btn-baixa {
+  background:    #fef2f2;
+  color:         #dc2626;
+  border:        1px solid #fca5a5;
+  border-radius: 6px;
+  font-size:     0.75rem;
+  font-weight:   600;
+  padding:       3px 8px;
+  cursor:        pointer;
+  transition:    background 0.15s;
+}
+.btn-baixa:hover { background: #fee2e2; }
+.btn-baixa.activa {
+  background: #dcfce7;
+  color:      #16a34a;
+  border-color: #86efac;
+}
+.btn-baixa.activa:hover { background: #bbf7d0; }
+
+/* ── Layout calendari + sidebar recompte ─────────────── */
+.cal-amb-recompte {
+  display:               grid;
+  grid-template-columns: 1fr 220px;
+  gap:                   1rem;
+  align-items:           start;
+}
+@media (max-width: 900px) {
+  .cal-amb-recompte { grid-template-columns: 1fr; }
+}
+
+/* ── Recompte hores lectius (sidebar dret) ───────────── */
+.cal-recompte {
+  display:        flex;
+  flex-direction: column;
+  gap:            6px;
+  padding:        10px;
+  background:     var(--blanc);
+  border:         1px solid var(--gris-vora);
+  border-radius:  10px;
+  box-shadow:     var(--ombra);
+}
+.recompte-pill {
+  display:        flex;
+  align-items:    center;
+  gap:            6px;
+  font-size:      0.72rem;
+  font-weight:    600;
+  padding:        5px 10px;
+  border-radius:  20px;
+  white-space:    nowrap;
+  border:         2px solid transparent;
+  background:     #fff;
+  color:          #1e293b;
+  box-shadow:     0 1px 2px rgba(0,0,0,0.07);
+}
+
+/* ── Botó nav desactivat ─────────────────────────────── */
+.btn-setmana:disabled {
+  opacity:  0.35;
+  cursor:   not-allowed;
+}
+
+/* ── Nova Franja: multi-select grups ─────────────────── */
+#h-grups-form {
+  min-height:   96px;
+  border:       1px solid var(--gris-vora);
+  border-radius:8px;
+  padding:      4px;
+  font-size:    0.875rem;
+  width:        100%;
+}
+#h-grups-form option { padding: 4px 8px; border-radius: 4px; }
+#h-grups-form option:checked { background: var(--blau-mig); color: #fff; }
+
+/* ── Nova Franja: professors de suport ───────────────── */
+.prof-suport-section {
+  margin-top:   1rem;
+  border-top:   1px solid var(--gris-vora);
+  padding-top:  0.75rem;
+}
+.prof-suport-header {
+  display:        flex;
+  align-items:    center;
+  gap:            0.75rem;
+  margin-bottom:  0.5rem;
+  font-size:      0.875rem;
+  color:          var(--text-clar);
+  font-weight:    500;
+}
+.btn-secondary-sm {
+  background:    var(--blau-mig);
+  color:         #fff;
+  border:        none;
+  border-radius: 6px;
+  padding:       4px 10px;
+  font-size:     0.8rem;
+  cursor:        pointer;
+}
+.btn-secondary-sm:hover { background: var(--blau-fosc); }
+.prof-suport-row {
+  display:        flex;
+  align-items:    center;
+  gap:            0.5rem;
+  margin-bottom:  0.4rem;
+}
+.prof-suport-row select {
+  flex:          1;
+  min-width:     0;
+  padding:       6px 8px;
+  border:        1px solid var(--gris-vora);
+  border-radius: 6px;
+  font-size:     0.85rem;
+}
+/* Ordre visual: Professor (2) | Aula (1.5) | Classe de Suport (1) */
+.prof-suport-row .prof-suport-sel  { flex: 2; }
+.prof-suport-row .prof-suport-aula { flex: 1.5; }
+.prof-suport-row .prof-suport-rol  { flex: 1; }
+.btn-del-suport {
+  background:    #fee2e2;
+  color:         #dc2626;
+  border:        none;
+  border-radius: 6px;
+  padding:       4px 8px;
+  cursor:        pointer;
+  font-size:     0.85rem;
+  flex-shrink:   0;
+}
+.btn-del-suport:hover { background: #fca5a5; }

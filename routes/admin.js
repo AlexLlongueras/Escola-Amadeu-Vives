@@ -1,210 +1,187 @@
-// routes/admin.js
-// Endpoints exclusius per al rol 'admin'.
-//
-// CANVI v2: les consultes d'horaris i activitats filtren per any_escolar.
-// L'admin pot passar ?any_escolar=2025/2026 per consultar anys anteriors.
-// Si no ho fa, s'usa l'any escolar actual calculat automàticament.
-
 'use strict';
 
-const express  = require('express');
-const router   = express.Router();
-const pool     = require('../config/db');
-const { verificarToken, autoritzarRol }          = require('../middleware/authMiddleware');
-const { obtenirAnyEscolar, validarAnyEscolar }   = require('../utils/anyEscolar');
+const express    = require('express');
+const router     = express.Router();
+const pool       = require('../config/db');
+const Professor  = require('../models/Professor');
+const Grup       = require('../models/Grup');
+const Horari     = require('../models/Horari');
+const { verificarToken } = require('../middleware/authMiddleware');
+const { getAnyEscolarActiu, validarAnyEscolar } = require('../utils/anyEscolar');
 
-const soloAdmin = [verificarToken, autoritzarRol(['admin'])];
+const auth = [verificarToken];
 
-// ─── Helper local per extreure l'any escolar de la request ────────────────────
-// Accepta el paràmetre ?any_escolar=AAAA/AAAA o el camp del body.
-// Si no ve o és invàlid, usa l'any actual.
-function resoldrAnyEscolar(req) {
-  const candidat = req.query.any_escolar || req.body?.any_escolar;
-  if (candidat && validarAnyEscolar(candidat)) return candidat;
-  return obtenirAnyEscolar();
+function anyParam(req) {
+  const c = req.query.any_escolar || req.body?.any_escolar;
+  return (c && validarAnyEscolar(c)) ? c : getAnyEscolarActiu();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CATÀLEGS (sense filtre d'any — entitats permanents)
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Catalegs ─────────────────────────────────────────────────────────────────
 
-// GET /api/admin/grups[?any_escolar=2025/2026]
-// Retorna la llista de grups registrats per a un curs escolar concret.
-router.get('/grups', ...soloAdmin, async (req, res) => {
-  const any_escolar = resoldrAnyEscolar(req);
-  const [rows] = await pool.execute(
-    'SELECT nom FROM GRUPS_CLASSE WHERE any_escolar = ? ORDER BY nom',
-    [any_escolar]
-  );
-  res.json({ any_escolar, grups: rows.map(r => r.nom) });
-});
-
-// GET /api/admin/aules
-router.get('/aules', ...soloAdmin, async (_req, res) => {
+router.get('/aules', ...auth, async (_req, res) => {
   const [rows] = await pool.execute('SELECT * FROM AULA ORDER BY nom_aula');
   res.json({ aules: rows });
 });
 
-// GET /api/admin/professors
-router.get('/professors', ...soloAdmin, async (_req, res) => {
-  const [rows] = await pool.execute(`
-    SELECT p.id_profesor, u.nom_usuari, p.especialitat
-    FROM   PROFESOR p JOIN USUARI u ON p.id_usuari = u.id_usuari
-    ORDER BY u.nom_usuari
-  `);
-  res.json({ professors: rows });
-});
-
-// GET /api/admin/assignatures
-router.get('/assignatures', ...soloAdmin, async (_req, res) => {
-  const [rows] = await pool.execute(
-    'SELECT * FROM ASIGNATURA ORDER BY nom_asignatura'
-  );
+router.get('/assignatures', ...auth, async (_req, res) => {
+  const [rows] = await pool.execute('SELECT * FROM ASIGNATURA ORDER BY nom_asignatura');
   res.json({ assignatures: rows });
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// HORARIS
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Aules CRUD ────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/admin/horaris[?any_escolar=2025/2026]
- * Retorna TOTS els horaris de tots els grups per a un any escolar.
- * Si no s'especifica any_escolar, usa el curs actual.
- */
-router.get('/horaris', ...soloAdmin, async (req, res) => {
-  const any_escolar = resoldrAnyEscolar(req);
+router.post('/aules', ...auth, async (req, res) => {
+  const { nom_aula, capacitat, tipo } = req.body;
+  if (!nom_aula?.trim()) return res.status(400).json({ error: 'nom_aula es obligatori.' });
+  const [r] = await pool.execute(
+    'INSERT INTO AULA (nom_aula, capacitat, tipo) VALUES (?, ?, ?)',
+    [nom_aula.trim(), capacitat ? Number(capacitat) : null, tipo?.trim() || 'clase']
+  );
+  res.status(201).json({ id_aula: r.insertId });
+});
 
+router.delete('/aules/:id', ...auth, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!id) return res.status(400).json({ error: 'ID no valid.' });
+  const [r] = await pool.execute('DELETE FROM AULA WHERE id_aula = ?', [id]);
+  if (!r.affectedRows) return res.status(404).json({ error: 'Aula no trobada.' });
+  res.json({ missatge: 'Aula eliminada.' });
+});
+
+// ── Assignatures CRUD ─────────────────────────────────────────────────────────
+
+router.post('/assignatures', ...auth, async (req, res) => {
+  const { nom_asignatura, color_calendari } = req.body;
+  if (!nom_asignatura?.trim()) return res.status(400).json({ error: 'nom_asignatura es obligatori.' });
+  const [r] = await pool.execute(
+    'INSERT INTO ASIGNATURA (nom_asignatura, color_calendari) VALUES (?, ?)',
+    [nom_asignatura.trim(), color_calendari?.trim() || '#1565c0']
+  );
+  res.status(201).json({ id_asignatura: r.insertId });
+});
+
+router.put('/assignatures/:id', ...auth, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!id) return res.status(400).json({ error: 'ID no valid.' });
+  const { nom_asignatura, color_calendari } = req.body;
+  if (!nom_asignatura?.trim()) return res.status(400).json({ error: 'nom_asignatura es obligatori.' });
+  const [r] = await pool.execute(
+    'UPDATE ASIGNATURA SET nom_asignatura = ?, color_calendari = ? WHERE id_asignatura = ?',
+    [nom_asignatura.trim(), color_calendari?.trim() || '#1565c0', id]
+  );
+  if (!r.affectedRows) return res.status(404).json({ error: 'Matèria no trobada.' });
+  res.json({ missatge: 'Matèria actualitzada.' });
+});
+
+router.delete('/assignatures/:id', ...auth, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!id) return res.status(400).json({ error: 'ID no valid.' });
+  const [r] = await pool.execute('DELETE FROM ASIGNATURA WHERE id_asignatura = ?', [id]);
+  if (!r.affectedRows) return res.status(404).json({ error: 'Assignatura no trobada.' });
+  res.json({ missatge: 'Assignatura eliminada.' });
+});
+
+// ── Professors CRUD ───────────────────────────────────────────────────────────
+
+router.get('/professors', ...auth, async (_req, res) => {
+  res.json({ professors: await Professor.llistar() });
+});
+
+router.post('/professors', ...auth, async (req, res) => {
+  const { nom, especialitat, email } = req.body;
+  if (!nom?.trim()) return res.status(400).json({ error: 'El nom es obligatori.' });
+  const id = await Professor.crear({ nom, especialitat, email });
+  res.status(201).json({ id_professor: id });
+});
+
+router.put('/professors/:id', ...auth, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!id) return res.status(400).json({ error: 'ID no valid.' });
+  const { nom, especialitat, email } = req.body;
+  if (!nom?.trim()) return res.status(400).json({ error: 'El nom es obligatori.' });
+  const n = await Professor.actualitzar(id, { nom, especialitat, email });
+  if (!n) return res.status(404).json({ error: 'Professor no trobat.' });
+  res.json({ missatge: 'Professor actualitzat.' });
+});
+
+router.delete('/professors/:id', ...auth, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!id) return res.status(400).json({ error: 'ID no valid.' });
+  const n = await Professor.eliminar(id);
+  if (!n) return res.status(404).json({ error: 'Professor no trobat.' });
+  res.json({ missatge: 'Professor eliminat.' });
+});
+
+router.put('/professors/:id/baixa', ...auth, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!id) return res.status(400).json({ error: 'ID no valid.' });
+  const { en_baixa, id_substitut } = req.body;
+  const n = await Professor.gestionarBaixa(id, en_baixa, id_substitut);
+  if (!n) return res.status(404).json({ error: 'Professor no trobat.' });
+  res.json({ missatge: en_baixa ? 'Baixa activada.' : 'Baixa desactivada.' });
+});
+
+// ── Grups CRUD ────────────────────────────────────────────────────────────────
+
+router.get('/grups', ...auth, async (req, res) => {
+  // ?all=true → retorna tots els grups de tots els cursos (per a la vista d'admin)
+  if (req.query.all === 'true') {
+    const [rows] = await pool.execute(
+      'SELECT * FROM GRUPS_CLASSE ORDER BY any_escolar DESC, nom'
+    );
+    return res.json({ grups: rows });
+  }
+  const any = anyParam(req);
+  res.json({ any_escolar: any, grups: await Grup.llistar(any) });
+});
+
+router.post('/grups', ...auth, async (req, res) => {
+  const { nom, curs } = req.body;
+  const any = anyParam(req);
+  if (!nom?.trim()) return res.status(400).json({ error: 'El nom es obligatori.' });
+  const id = await Grup.crear({ nom, curs, any_escolar: any });
+  res.status(201).json({ id_grup: id, any_escolar: any });
+});
+
+router.delete('/grups/:id', ...auth, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!id) return res.status(400).json({ error: 'ID no valid.' });
+  const n = await Grup.eliminar(id);
+  if (!n) return res.status(404).json({ error: 'Grup no trobat.' });
+  res.json({ missatge: 'Grup eliminat.' });
+});
+
+// ── Horaris (admin: tots els grups) ──────────────────────────────────────────
+
+router.get('/horaris', ...auth, async (req, res) => {
+  const any = anyParam(req);
   const [rows] = await pool.execute(`
     SELECT
-      h.id_horari,
-      h.dia_semana,
-      h.hora_inici,
-      h.hora_fi,
-      h.grup,
-      h.any_escolar,
+      h.*,
       a.nom_asignatura,
-      u.nom_usuari AS nom_professor,
-      au.nom_aula
+      au.nom_aula,
+      GROUP_CONCAT(
+        p.nom ORDER BY hp.rol
+        SEPARATOR ', '
+      ) AS nom_professor
     FROM   HORARI_LECTIU h
-    JOIN   ASIGNATURA a  ON h.id_asignatura = a.id_asignatura
-    JOIN   PROFESOR   p  ON h.id_profesor   = p.id_profesor
-    JOIN   USUARI     u  ON p.id_usuari     = u.id_usuari
-    JOIN   AULA       au ON h.id_aula       = au.id_aula
+    JOIN   ASIGNATURA       a  ON h.id_asignatura = a.id_asignatura
+    LEFT JOIN AULA          au ON h.id_aula        = au.id_aula
+    LEFT JOIN HORARI_PROFESSOR hp ON hp.id_horari  = h.id_horari
+    LEFT JOIN PROFESSOR     p  ON hp.id_professor  = p.id_professor
     WHERE  h.any_escolar = ?
-    ORDER BY
-      FIELD(h.dia_semana,'Dilluns','Dimarts','Dimecres','Dijous','Divendres'),
-      h.hora_inici
-  `, [any_escolar]);
-
-  res.json({ any_escolar, horaris: rows });
+    GROUP BY h.id_horari
+    ORDER BY FIELD(h.dia_semana,'Dilluns','Dimarts','Dimecres','Dijous','Divendres'), h.hora_inici
+  `, [any]);
+  res.json({ any_escolar: any, horaris: rows });
 });
 
-/**
- * DELETE /api/admin/horaris/:id
- * Elimina una franja horària per ID (l'any_escolar no cal perquè l'ID és únic).
- */
-router.delete('/horaris/:id', ...soloAdmin, async (req, res) => {
+router.delete('/horaris/:id', ...auth, async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  if (isNaN(id)) {
-    return res.status(400).json({ error: 'ID no vàlid.' });
-  }
-
-  const [[horari]] = await pool.execute(`
-    SELECT h.id_horari, a.nom_asignatura, h.dia_semana, h.grup, h.any_escolar
-    FROM   HORARI_LECTIU h
-    JOIN   ASIGNATURA a ON h.id_asignatura = a.id_asignatura
-    WHERE  h.id_horari = ?
-  `, [id]);
-
-  if (!horari) {
-    return res.status(404).json({ error: 'Franja horària no trobada.' });
-  }
-
-  await pool.execute('DELETE FROM HORARI_LECTIU WHERE id_horari = ?', [id]);
-
-  res.json({
-    missatge: `Franja eliminada: ${horari.nom_asignatura} · ${horari.dia_semana} · ${horari.grup} (${horari.any_escolar})`,
-  });
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ACTIVITATS EXTRAESCOLARS
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * POST /api/admin/activitats
- * Crea una nova activitat extraescolar per a l'any escolar actual.
- * L'admin pot passar any_escolar al body per crear-la per a un curs futur.
- */
-router.post('/activitats', ...soloAdmin, async (req, res) => {
-  const {
-    nom, dia_semana, hora_inici, hora_fi,
-    id_aula, responsable, places_maximes,
-  } = req.body;
-
-  if (!nom || !hora_inici || !hora_fi || !responsable || !places_maximes) {
-    return res.status(400).json({ error: 'Falten camps obligatoris.' });
-  }
-
-  const any_escolar = resoldrAnyEscolar(req);
-
-  const [result] = await pool.execute(`
-    INSERT INTO ACTIVITAT_EXTRAESCOLAR
-      (nom, dia_semana, hora_inici, hora_fi, id_aula, responsable, places_maximes, any_escolar)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `, [
-    nom,
-    dia_semana  || null,
-    hora_inici,
-    hora_fi,
-    id_aula     || null,
-    responsable,
-    places_maximes,
-    any_escolar,
-  ]);
-
-  res.status(201).json({ id_activitat: result.insertId, any_escolar });
-});
-
-/**
- * DELETE /api/admin/activitats/:id
- * Elimina una activitat extraescolar per ID.
- * No pot eliminar-se si té inscripcions actives.
- */
-router.delete('/activitats/:id', ...soloAdmin, async (req, res) => {
-  const id = parseInt(req.params.id, 10);
-  if (isNaN(id)) {
-    return res.status(400).json({ error: 'ID no vàlid.' });
-  }
-
-  const [[activitat]] = await pool.execute(
-    'SELECT id_activitat, nom, any_escolar FROM ACTIVITAT_EXTRAESCOLAR WHERE id_activitat = ?',
-    [id]
-  );
-
-  if (!activitat) {
-    return res.status(404).json({ error: 'Activitat no trobada.' });
-  }
-
-  // Comprovem si té inscripcions actives
-  const [[{ total }]] = await pool.execute(
-    'SELECT COUNT(*) AS total FROM INSCRIPCIO_ACTIVITAT WHERE id_activitat = ?',
-    [id]
-  );
-
-  if (total > 0) {
-    return res.status(409).json({
-      error:  `No es pot eliminar "${activitat.nom}" (${activitat.any_escolar}).`,
-      detall: `Té ${total} inscripció${total > 1 ? 'ns' : ''} activa${total > 1 ? 's' : ''}. ` +
-              `Elimina primer les inscripcions o desactiva l'activitat.`,
-    });
-  }
-
-  await pool.execute('DELETE FROM ACTIVITAT_EXTRAESCOLAR WHERE id_activitat = ?', [id]);
-  res.json({
-    missatge: `Activitat "${activitat.nom}" (${activitat.any_escolar}) eliminada correctament.`,
-  });
+  if (!id) return res.status(400).json({ error: 'ID no valid.' });
+  const n = await Horari.eliminar(id);
+  if (!n) return res.status(404).json({ error: 'Horari no trobat.' });
+  res.json({ missatge: 'Horari eliminat.' });
 });
 
 module.exports = router;

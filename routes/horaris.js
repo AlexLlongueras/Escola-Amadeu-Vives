@@ -1,27 +1,29 @@
-// routes/horaris.js
-// Rutes de HORARI_LECTIU amb protecció per token i rol.
+'use strict';
 
-const express    = require('express');
-const router     = express.Router();
-const { verificarToken, autoritzarRol } = require('../middleware/authMiddleware');
-const horarisController = require('../controllers/horarisController');
+const express = require('express');
+const router  = express.Router();
+const { verificarToken } = require('../middleware/authMiddleware');
+const ctrl    = require('../controllers/horarisController');
 
-// GET /api/horaris?grup=1r A
-// Qualsevol usuari logueat pot consultar horaris
-router.get(
-  '/',
-  verificarToken,
-  autoritzarRol(['admin', 'profesor', 'alumne', 'familia']),
-  horarisController.getByGrup
-);
+// GET  /api/horaris/professor/:id[?any_escolar=…]
+router.get('/professor/:id',                           verificarToken, ctrl.getByProfessor);
+
+// GET  /api/horaris?grup=1r A[&any_escolar=…]
+router.get('/',                                        verificarToken, ctrl.getByGrup);
 
 // POST /api/horaris
-// Només l'admin pot crear franges horàries
-router.post(
-  '/',
-  verificarToken,
-  autoritzarRol(['admin']),
-  horarisController.create
-);
+router.post('/',                                       verificarToken, ctrl.create);
+
+// PUT  /api/horaris/:id
+router.put('/:id',                                     verificarToken, ctrl.actualitzar);
+
+// POST   /api/horaris/:id/professors
+router.post('/:id/professors',                         verificarToken, ctrl.afegirProfessor);
+
+// DELETE /api/horaris/:id/professors/:id_prof
+router.delete('/:id/professors/:id_prof',              verificarToken, ctrl.eliminarProfessor);
+
+// PUT    /api/horaris/:id/professors/:id_prof/substitut
+router.put('/:id/professors/:id_prof/substitut',       verificarToken, ctrl.actualitzarSubstitut);
 
 module.exports = router;
