@@ -61,7 +61,6 @@ const horarisController = {
     if (!hora_inici)    absents.push('hora_inici');
     if (!hora_fi)       absents.push('hora_fi');
     if (!id_asignatura) absents.push('id_asignatura');
-    if (!id_aula)       absents.push('id_aula (Aula és obligatòria)');
     if (!id_professor)  absents.push('id_professor (Professor Titular obligatori)');
     if (!grups.length)  absents.push('grup');
     if (absents.length) return res.status(400).json({ error: `Falten camps: ${absents.join(', ')}.` });

@@ -1311,8 +1311,7 @@ $('btn-crear-horari').addEventListener('click', async () => {
     return msg('horari-msg', 'Dia i matèria son obligatoris.', 'err');
   if (!titular)
     return msg('horari-msg', 'El Professor Titular és obligatori.', 'err');
-  if (!aula)
-    return msg('horari-msg', "L'Aula és obligatòria.", 'err');
+
   if (!grups.length)
     return msg('horari-msg', 'Selecciona almenys un grup.', 'err');
 
